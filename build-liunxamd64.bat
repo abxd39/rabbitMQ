@@ -1,0 +1,1 @@
+gox -osarch="linux/amd64"
