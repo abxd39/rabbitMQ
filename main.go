@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"sctek.com/typhoon/th-platform-gateway/middleware"
+	"sctek.com/typhoon/th-platform-gateway/rabbitMQ"
 )
 
 func main() {
@@ -34,6 +35,8 @@ func main() {
 			log.Printf("listen: %s\n", err)
 		}
 	}()
+
+	rabbitMQ.NewConsumer(common.Config.Mq.Uri,common.Config.Mq.Exchange,common.Config.Mq.ExchangeType,common.Config.Mq.QueueName,common.Config.Mq.Key,common.Config.Mq.ConsumerTag)
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 30 seconds.
