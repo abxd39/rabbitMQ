@@ -3,7 +3,7 @@ package module
 import (
 	"fmt"
 	"log"
-	"sctek.com/typhoon/th-open-api/common"
+	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
 

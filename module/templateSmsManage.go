@@ -2,7 +2,6 @@ package module
 
 import (
 	"fmt"
-	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
@@ -33,7 +32,10 @@ func (t*TemplateSmsManage) AboutIdInfo(id int)error{
 	}
 	//判断怎么发送 发送那些人
 	if !has{
-		return fmt.Errorf("给定的模板id=%d的条目不存在！！！",id)
+		err=fmt.Errorf("给定的模板id=%d的条目不存在！！！",id)
+		common.Log.Errorf(err.Error())
+		return err
+
 	}
 	if t.AcceptUserType ==1 { //指定会员
 		if t.SendType ==1{//即时发
@@ -49,14 +51,14 @@ func (t*TemplateSmsManage) AboutIdInfo(id int)error{
 			//启动定时器
 		}
 	}
-	t.SendStatus =2
-	count,err:=engine.Cols("send_status").Where("id=?",id).Update(t)
-	if err!=nil{
-		log.Println("短息发送的状态更新数据库失败！！！")
-		return  err
-	}
-	if count==0{
-		log.Println("短息发送的状态更新数据库失败！！！")
-	}
+	//t.SendStatus =2
+	//count,err:=engine.Cols("send_status").Where("id=?",id).Update(t)
+	//if err!=nil{
+	//	log.Println("短息发送的状态更新数据库失败！！！")
+	//	return  err
+	//}
+	//if count==0{
+	//	log.Println("短息发送的状态更新数据库失败！！！")
+	//}
 	return nil
 }

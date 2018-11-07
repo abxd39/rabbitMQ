@@ -5,7 +5,7 @@ import (
 	"github.com/go-xorm/xorm"
 )
 
-var DB *xorm.EngineGroup
+var DB *xorm.Engine
 var Config *ServerConfig
 var RedisPool *redis.Client
 var Log *Logger

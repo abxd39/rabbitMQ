@@ -101,7 +101,7 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	reader := bytes.NewReader(bytesData)
-	url := "http://dev-ibc.snsshop.net/ec_crm/sms/qcloud_send?"
+	url := "http://mall-api.dev-ibc.snsshop.net/ec_crm/sms/qcloud_send?"
 	request, err := http.NewRequest("POST", url, reader)
 	if err != nil {
 		return err
@@ -109,7 +109,9 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
 	client := http.Client{}
 	result, err := client.Do(request)
+
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 	rsp := &struct {
@@ -120,6 +122,7 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println(string(body))
 	log.Printf("发送短息的url:=%s", url)
 	log.Printf("返回值=%s",string(body))
 	err = json.Unmarshal(body, rsp)

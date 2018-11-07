@@ -7,6 +7,7 @@ import (
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	db "sctek.com/typhoon/th-platform-gateway/module"
+	"strconv"
 )
 
 type Consumer struct {
@@ -137,14 +138,19 @@ func handle(deliveries <-chan amqp.Delivery, done chan error) {
 func (c *Consumer) UnmarshalMQBody(body []byte) error {
 	log.Println(string(body))
 	result := &struct {
-		Id int `json:"id"`
+		Id string `json:"id"`
 	}{}
 	err := json.Unmarshal(body, result)
 	if err != nil {
 		common.Log.Infoln(err)
 		return err
 	}
-	return new(db.TemplateSmsManage).AboutIdInfo(result.Id)
+	value,err:=strconv.Atoi(result.Id)
+	if err!=nil{
+		common.Log.Infoln(err)
+		return err
+	}
+	return new(db.TemplateSmsManage).AboutIdInfo(value)
 }
 
 //定时任务定时检查 mq队列 有无消息

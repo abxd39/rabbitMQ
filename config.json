@@ -1,0 +1,47 @@
+{
+  "Listen":":5010",
+  "runtimePath":"runtime",
+  "maxWork":10,
+  "maxQueueSize":200,
+  "db": {
+    "host":"10.20.20.82",
+    "name":"typhoon_ibc",
+    "user":"root",
+    "password":"typhoon",
+    "maxOpenConns":100,
+    "maxIdleConns":10,
+    "showSQL":true,
+    "slave_config":{
+      "user":"admin",
+      "password":"admin"
+    },
+    "slaves":[
+      {
+      "host":"10.20.20.82",
+        "port":"3306",
+        "name":"typhoon_ibc"
+    }
+    ]
+  },
+  "mq":{
+    "uri":"amqp://admin:admin@10.20.20.80:5672//dbees",
+    "exchange":"amq.fanout",
+    "exchange_type":"fanout",
+    "queue_name":"yf_sms_send",
+    "key":"test_key",
+    "consumer_tag":"simple_consumer"
+  },
+  "redis":{
+    "address":"127.0.0.1",
+    "password":"123456"
+  },
+  "log": {
+    "traceLevel": 1,
+    "logFile":"th-open-api.log"
+  },
+  "gate_way":{
+    "host":"127.0.0.1"
+  },
+  "token":"test",
+  "aPIHost":"https://marketing-api.dev-dbees.snsshop.net/"
+}

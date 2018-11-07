@@ -1,6 +1,9 @@
 package module
 
-import "sctek.com/typhoon/th-platform-gateway/common"
+import (
+	"fmt"
+	"sctek.com/typhoon/th-platform-gateway/common"
+)
 
 type TemplateSmsType struct {
 	Id               int    `xorm:"not null pk autoincr INT(10)"`
@@ -10,28 +13,29 @@ type TemplateSmsType struct {
 }
 
 //指定会员时的条件筛选
-func (t*TemplateSmsType) SearchOfManageId(mId,templateMessageId int)error{
-	engine:=common.DB
+func (t *TemplateSmsType) SearchOfManageId(mId, templateMessageId int) error {
+	engine := common.DB
 	//获取短息模板
-	message,err:=new(TemplateSms).GetText(templateMessageId)
-	if err!=nil{
+	message, err := new(TemplateSms).GetText(templateMessageId)
+	if err != nil {
+		common.Log.Infoln(err)
 		return err
 	}
-	list:=make([]TemplateSmsType,0)
-	has,err:=engine.Where("template_manage_id=?",mId).Get(&list)
-	if err!=nil{
+	list := make([]TemplateSmsType, 0)
+	err = engine.Where("template_manage_id=?", mId).Find(&list)
+	if err != nil {
 		common.Log.Errorln(err)
 		return err
 	}
-	if has{
-		for _,v:=range list  {
-			if v.Type==1{//姓名
-				new(MemberInfo).SendMassageForName(v.TypeData,message)
-			}else if v.Type==2{//会员等级
 
-			}else if v.Type==3{ //会员生日
+	for _, v := range list {
+		fmt.Println("指定发送给谁",v.Type)
+		if v.Type == 1 { //姓别
+			new(MemberInfo).SendMassageForSex(v.TypeData, message)
+		} else if v.Type == 2 { //会员等级
 
-			}
+		} else if v.Type == 3 { //会员生日
+
 		}
 	}
 	return nil

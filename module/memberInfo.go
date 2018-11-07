@@ -27,17 +27,20 @@ func (m* MemberInfo) TableName() string {
 }
 
 
-func (m* MemberInfo) SendMassageForName(name,message string)error{
+func (m* MemberInfo) SendMassageForSex(sex,message string)error{
 	engine:=common.DB
-	has,err:=engine.Where("name=?",name).Get(m)
+	list:=make([]MemberInfo,0)
+	fmt.Println("sex",sex,"message",message)
+	err:=engine.Where("sex=?",sex).Find(&list)
 	if err!=nil{
 		common.Log.Errorln(err)
 		return err
 	}
-	if !has{
-		return fmt.Errorf("name=%s 的会员不存在！！",name)
-	}
 	//发送短信
-	new(sms.SMSMessage).SendMobileMessage(m.Mobile,message)
+	for _,value:=range list{
+		fmt.Println("phone=",value.Mobile)
+		new(sms.SMSMessage).SendMobileMessage(value.Mobile,message)
+	}
+
 	return nil
 }

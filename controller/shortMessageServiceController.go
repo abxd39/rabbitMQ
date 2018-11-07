@@ -11,10 +11,13 @@ type ShortMessageService struct {
 func (s *ShortMessageService) Router(r *gin.Engine)  {
 	sms := r.Group("/sms")
 	{
-		//sms.GET("/Test/hello", action.Hello)
-		_=sms
+		sms.GET("/Test/hello", s.Hello)
 	}
 
+}
+
+func (s*ShortMessageService)Hello(c*gin.Context){
+	return
 }
 
 
