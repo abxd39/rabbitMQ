@@ -3,7 +3,9 @@ package sms
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"sctek.com/pingtai/consumer/common"
 	"strconv"
@@ -83,4 +85,49 @@ func execTask(url string, msg string) string {
 	body, _ := ioutil.ReadAll(resp.Body)
 	respMsg := string(body)
 	return respMsg
+}
+
+
+//发送短息
+type SMSMessage struct{}
+
+func (s *SMSMessage) SendMobileMessage(phone, message string) error {
+	params := make(map[string]interface{})
+	params["mobile"] = phone
+	params["msg"] = message
+	params["send_type"] = "ibc_mall_sign"
+	bytesData, err := json.Marshal(params)
+	if err != nil {
+		return err
+	}
+	reader := bytes.NewReader(bytesData)
+	url := "http://dev-ibc.snsshop.net/ec_crm/sms/qcloud_send?"
+	request, err := http.NewRequest("POST", url, reader)
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-Type", "application/json;charset=UTF-8")
+	client := http.Client{}
+	result, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+	rsp := &struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+	}{}
+	body, err := ioutil.ReadAll(result.Body)
+	if err != nil {
+		return err
+	}
+	log.Printf("发送短息的url:=%s", url)
+	log.Printf("返回值=%s",string(body))
+	err = json.Unmarshal(body, rsp)
+	if err != nil {
+		return err
+	}
+	if rsp.Code != 0 {
+		return fmt.Errorf(rsp.Msg)
+	}
+	return nil
 }

@@ -10,8 +10,13 @@ type TemplateSmsType struct {
 }
 
 //指定会员时的条件筛选
-func (t*TemplateSmsType) SearchOfManageId(mId int)error{
+func (t*TemplateSmsType) SearchOfManageId(mId,templateMessageId int)error{
 	engine:=common.DB
+	//获取短息模板
+	message,err:=new(TemplateSms).GetText(templateMessageId)
+	if err!=nil{
+		return err
+	}
 	list:=make([]TemplateSmsType,0)
 	has,err:=engine.Where("template_manage_id=?",mId).Get(&list)
 	if err!=nil{
@@ -21,7 +26,7 @@ func (t*TemplateSmsType) SearchOfManageId(mId int)error{
 	if has{
 		for _,v:=range list  {
 			if v.Type==1{//姓名
-
+				new(MemberInfo).SendMassageForName(v.TypeData,message)
 			}else if v.Type==2{//会员等级
 
 			}else if v.Type==3{ //会员生日

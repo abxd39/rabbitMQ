@@ -1,6 +1,11 @@
 package module
 
-import "time"
+import (
+	"fmt"
+	"log"
+	"sctek.com/typhoon/th-open-api/common"
+	"time"
+)
 
 type TemplateSms struct {
 	Id           int       `xorm:"not null pk autoincr INT(10)"`
@@ -11,4 +16,18 @@ type TemplateSms struct {
 	TemplateId   string    `xorm:"default '' comment('模板id') VARCHAR(15)"`
 	Content      string    `xorm:"comment('模板内容') TEXT"`
 	Created      time.Time `xorm:"comment('时间') DATETIME"`
+}
+
+
+func (t* TemplateSms) GetText(TemplateId int) (string,error){
+	engine :=common.DB
+	has,err:=engine.Where("template_type=?",TemplateId).Get(t)
+	if err!=nil{
+		log.Printf("短息模板查询失败=%s",err.Error())
+		return "",err
+	}
+	if !has{
+		return "",fmt.Errorf("短息模板id为=%d不存在",TemplateId)
+	}
+	return t.Content,nil
 }

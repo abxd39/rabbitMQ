@@ -1,6 +1,9 @@
 package module
 
 import (
+	"fmt"
+	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/sms"
 	"time"
 )
 
@@ -19,6 +22,22 @@ type MemberInfo struct {
 	Email    string    `xorm:"not null default '' comment('邮箱') VARCHAR(50)"`
 }
 
-func (a MemberInfo) TableName() string {
+func (m* MemberInfo) TableName() string {
 	return "member_info"
+}
+
+
+func (m* MemberInfo) SendMassageForName(name,message string)error{
+	engine:=common.DB
+	has,err:=engine.Where("name=?",name).Get(m)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return err
+	}
+	if !has{
+		return fmt.Errorf("name=%s 的会员不存在！！",name)
+	}
+	//发送短信
+	new(sms.SMSMessage).SendMobileMessage(m.Mobile,message)
+	return nil
 }
