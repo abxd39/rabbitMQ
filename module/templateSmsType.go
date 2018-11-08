@@ -31,9 +31,9 @@ func (t *TemplateSmsType) SearchOfManageId(mId, templateMessageId int) error {
 	for _, v := range list {
 		fmt.Println("指定发送给谁",v.Type)
 		if v.Type == 1 { //姓别
-			new(MemberInfo).SendMassageForSex(v.TypeData, message)
+			new(MemberInfo).SendMessageForSex(v.TypeData, message)
 		} else if v.Type == 2 { //会员等级
-
+			new(MemberCard).SendMessageForGrade("1","")
 		} else if v.Type == 3 { //会员生日
 
 		}

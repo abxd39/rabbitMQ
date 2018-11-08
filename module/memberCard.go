@@ -1,6 +1,9 @@
 package module
 
 import (
+	"fmt"
+	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"time"
 )
 
@@ -23,4 +26,31 @@ type MemberCard struct {
 
 func (a MemberCard) TableName() string {
 	return "member_card"
+}
+
+//根据会员等级发送
+func (m *MemberCard) SendMessageForGrade(grade, message string) error {
+	common.Log.Infoln("根据会员等级把消息压入mq队列")
+	engine := common.DB
+	list := make([]MemberCard, 0)
+	err := engine.Where("level=?", grade).Find(&list)
+	if err != nil {
+		common.Log.Infoln(err)
+		manageMq.ExampleLoggerOutput(err.Error())
+		return err
+	}
+	//test
+	if len(list) <= 0 {
+		for i := 0; i < 10000; i++ {
+			list = append(list, MemberCard{})
+		}
+	}
+	for _, v := range list {
+		_ = v
+		phone := "15920038315"
+		message := "are you sure??"
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", phone, message)
+		manageMq.GlobalMq.Publish("fanout", "")
+	}
+	return nil
 }

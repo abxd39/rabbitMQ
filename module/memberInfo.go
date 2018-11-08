@@ -3,7 +3,7 @@ package module
 import (
 	"fmt"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/sms"
+	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"time"
 )
 
@@ -22,25 +22,67 @@ type MemberInfo struct {
 	Email    string    `xorm:"not null default '' comment('邮箱') VARCHAR(50)"`
 }
 
-func (m* MemberInfo) TableName() string {
+func (m *MemberInfo) TableName() string {
 	return "member_info"
 }
 
-
-func (m* MemberInfo) SendMassageForSex(sex,message string)error{
-	engine:=common.DB
-	list:=make([]MemberInfo,0)
-	fmt.Println("sex",sex,"message",message)
-	err:=engine.Where("sex=?",sex).Find(&list)
-	if err!=nil{
+func (m *MemberInfo) SendMessageForSex(sex, message string) error {
+	common.Log.Infoln("根据性别发送短息")
+	engine := common.DB
+	list := make([]MemberInfo, 0)
+	fmt.Println("sex", sex, "message", message)
+	err := engine.Where("sex=?", sex).Find(&list)
+	if err != nil {
 		common.Log.Errorln(err)
 		return err
 	}
 	//发送短信
-	for _,value:=range list{
-		fmt.Println("phone=",value.Mobile)
-		new(sms.SMSMessage).SendMobileMessage(value.Mobile,message)
+	for _, value := range list {
+		manageMq.ExampleLoggerOutput("phone=" + value.Mobile)
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", value.Mobile, message)
+		manageMq.GlobalMq.Publish("fanout", message)
+		//new(sms.SMSMessage).SendMobileMessage(value.Mobile,message)
 	}
 
+	return nil
+}
+
+//根据会员生日
+func (m *MemberInfo) SendMessageForBirthDay(date, message string) error {
+	common.Log.Infoln("根据会员生日发送信息")
+	phone := "15920038315"
+	msg := "are you sure??"
+	engine := common.DB
+	list := make([]MemberInfo, 0)
+	err := engine.Select("select * from member_info").Find(&list)
+	if err != nil {
+		common.Log.Errorln(err)
+		manageMq.ExampleLoggerOutput(err.Error())
+		return err
+	}
+	for _, v := range list {
+		_ = v
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", phone, msg)
+		manageMq.GlobalMq.Publish("fanout", message)
+	}
+
+	return nil
+}
+
+//全员发送
+func(m*MemberInfo)SendMessageEveryOne (message string)error{
+	common.Log.Infoln("即时全员发送")
+	engine:=common.DB
+	list :=make([]MemberInfo,0)
+	err:=engine.Select("select * from member_info").Find(&list)
+	if err!=nil{
+		common.Log.Errorln(err)
+		manageMq.ExampleLoggerOutput(err.Error())
+		return err
+	}
+	for _,v:=range list{
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}",v.Mobile,message)
+		manageMq.GlobalMq.Publish("fanout",message)
+	}
 	return nil
 }

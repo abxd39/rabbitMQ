@@ -3,6 +3,7 @@ package module
 import (
 	"fmt"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"time"
 )
 
@@ -39,16 +40,26 @@ func (t*TemplateSmsManage) AboutIdInfo(id int)error{
 	}
 	if t.AcceptUserType ==1 { //指定会员
 		if t.SendType ==1{//即时发
+			manageMq.ExampleLoggerOutput("指定会员——即时发送")
 			go new(TemplateSmsType).SearchOfManageId(t.Id,t.TemplateId)
 		}else if t.SendType ==2{//定时发
 			//启动定时器
+			manageMq.ExampleLoggerOutput("指定会员——定时发送")
 		}
 
 	}else if t.AcceptUserType ==2{//全部会员
+		//获取短息模板
+		message, err := new(TemplateSms).GetText(t.TemplateId)
+		if err != nil {
+			common.Log.Infoln(err)
+			return err
+		}
 		if t.SendType ==1{//即时发
-
+			manageMq.ExampleLoggerOutput("全员会员——即时发送")
+			new(MemberInfo).SendMessageEveryOne(message)
 		}else if t.SendType ==2{//定时发
 			//启动定时器
+			manageMq.ExampleLoggerOutput("全会员——定时发送")
 		}
 	}
 	//t.SendStatus =2

@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"sctek.com/typhoon/th-platform-gateway/rabbitMQ"
 	"sctek.com/typhoon/th-platform-gateway/router"
 	"time"
@@ -46,8 +47,9 @@ func main() {
 	}
 	defer c.Shutdown()
 	//短息的发送内容mq管理
-	rabbitMQ.InitMq()
-	defer rabbitMQ.GlobalMq.Shutdown()
+	manageMq.InitMq()
+	defer manageMq.GlobalMq.Shutdown()
+
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 30 seconds.
 	quit := make(chan os.Signal)

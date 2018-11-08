@@ -10,3 +10,4 @@ type TemplateSmsLog struct {
 	Status           int       `xorm:"default 0 comment('发送状态：1-成功；2-失败') TINYINT(1)"`
 	Created          time.Time `xorm:"comment('备注时间') DATETIME"`
 }
+
