@@ -153,6 +153,8 @@ func (c *Consumer) UnmarshalMQBody(body []byte) error {
 	return new(db.TemplateSmsManage).AboutIdInfo(value)
 }
 
-//定时任务定时检查 mq队列 有无消息
+
+//从数据库获取 发送的会员之后放入队列
+
 //根据消息 查询mysql 数据库
 //根据数据库 查询得到的消息 处理如何发送短息。 调用第三方接口发送短息
