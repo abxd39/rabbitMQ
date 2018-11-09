@@ -111,14 +111,14 @@ func (c *Consumer) Shutdown() error {
 		return fmt.Errorf("AMQP connection close error: %s", err)
 	}
 
-	defer log.Printf("AMQP shutdown OK")
+	defer log.Printf("AMQP shutdown rabbitMQ OK")
 
 	// wait for handle() to exit
 	return <-c.done
 }
 
 func handle(deliveries <-chan amqp.Delivery, done chan error) {
-	log.Println("此处一直阻塞等待获取 mq 中的消息")
+	log.Println("rabbitMQ 一直阻塞 获取消息")
 	for d := range deliveries {
 		log.Printf(
 			"got %dB delivery: [%v] %q",

@@ -41,10 +41,32 @@ func (t*TemplateSmsManage) AboutIdInfo(id int)error{
 	if t.AcceptUserType ==1 { //指定会员
 		if t.SendType ==1{//即时发
 			manageMq.ExampleLoggerOutput("指定会员——即时发送")
-			go new(TemplateSmsType).SearchOfManageId(t.Id,t.TemplateId)
+			new(TemplateSmsType).SearchOfManageId(t.Id,t.TemplateId)
 		}else if t.SendType ==2{//定时发
 			//启动定时器
-			manageMq.ExampleLoggerOutput("指定会员——定时发送")
+			str:="2006-01-02 15:04:05"
+			str=t.SendTime.Format(str)
+			manageMq.ExampleLoggerOutput("定时发送短息时间是"+str)
+			for {
+				time.Sleep(5*time.Second)
+				tim:=time.Now()
+				//再次查询数据库是否已经被取消掉了
+				has,err=engine.Where("id=?",id).Where("send_status=1").Get(t)
+				if err !=nil{
+					return err
+				}
+				if !has{
+					//发送已经取消
+					return nil
+				}
+				//判断是否到发送时间
+				if t.SendTime.Unix()<=tim.Unix(){
+					manageMq.ExampleLoggerOutput("指定会员——定时发送")
+					new(TemplateSmsType).SearchOfManageId(t.Id,t.TemplateId)
+					return nil
+				}
+			}
+
 		}
 
 	}else if t.AcceptUserType ==2{//全部会员
@@ -60,6 +82,25 @@ func (t*TemplateSmsManage) AboutIdInfo(id int)error{
 		}else if t.SendType ==2{//定时发
 			//启动定时器
 			manageMq.ExampleLoggerOutput("全会员——定时发送")
+			for {
+				time.Sleep(5*time.Second)
+				tim:=time.Now()
+				//再次查询数据库是否已经被取消掉了
+				has,err=engine.Where("id=?",id).Where("send_status=1").Get(t)
+				if err !=nil{
+					return err
+				}
+				if !has{
+					//发送已经取消
+					return nil
+				}
+				//判断是否到发送时间
+				if t.SendTime.Unix()<=tim.Unix(){
+					manageMq.ExampleLoggerOutput("指定会员——定时发送")
+					new(MemberInfo).SendMessageEveryOne(message)
+					return nil
+				}
+			}
 		}
 	}
 	//t.SendStatus =2

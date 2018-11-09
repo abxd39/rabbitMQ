@@ -24,7 +24,17 @@ type MemberCard struct {
 	IsTimeDelete      int       `xorm:"not null default 0 comment('是否定时删除（0：否，1：是）') TINYINT(1)"`
 }
 
-func (a MemberCard) TableName() string {
+func (m* MemberCard) TableName() string {
+	return "member_card"
+}
+
+type mobile struct {
+	Mobile string `json:"mobile"`
+	Level  int    `json:"level"`
+	CardNo string `json:"card_no"`
+}
+
+func (m*mobile) TableName()string{
 	return "member_card"
 }
 
@@ -32,25 +42,20 @@ func (a MemberCard) TableName() string {
 func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 	common.Log.Infoln("根据会员等级把消息压入mq队列")
 	engine := common.DB
-	list := make([]MemberCard, 0)
-	err := engine.Where("level=?", grade).Find(&list)
+
+	query := engine.Join("left", "member_info", "car_no==id")
+	query = query.In("level", grade)
+
+	list := make([]mobile, 0)
+	err := query.Find(&list)
 	if err != nil {
 		common.Log.Infoln(err)
 		manageMq.ExampleLoggerOutput(err.Error())
 		return err
 	}
-	//test
-	if len(list) <= 0 {
-		for i := 0; i < 10000; i++ {
-			list = append(list, MemberCard{})
-		}
-	}
 	for _, v := range list {
-		_ = v
-		phone := "15920038315"
-		message := "are you sure??"
-		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", phone, message)
-		manageMq.GlobalMq.Publish("fanout", "")
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
+		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, message)
 	}
 	return nil
 }

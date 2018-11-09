@@ -40,21 +40,26 @@ func main() {
 	fmt.Println("mq status")
 	log.Println("Uri=", common.Config.Mq.Uri)
 	log.Println("uName=", common.Config.Mq.QueueName)
-	c,err:=rabbitMQ.NewConsumer(common.Config.Mq.Uri, common.Config.Mq.Exchange, common.Config.Mq.ExchangeType, common.Config.Mq.QueueName, common.Config.Mq.Key, common.Config.Mq.ConsumerTag)
-	if err!=nil{
+	c, err := rabbitMQ.NewConsumer(common.Config.Mq.Uri, common.Config.Mq.Exchange, common.Config.Mq.ExchangeType, common.Config.Mq.QueueName, common.Config.Mq.Key, common.Config.Mq.ConsumerTag)
+	if err != nil {
 		common.Log.Infoln(err)
 		panic("mq链接失败")
 	}
-	defer c.Shutdown()
+
 	//短息的发送内容mq管理
 	manageMq.InitMq()
-	defer manageMq.GlobalMq.Shutdown()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
+	manageMq.GlobalMq.ReceiveMessage(common.Config.ManageMq.QueueName)
+	//Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 30 seconds.
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
+
+	//关闭mq
+	manageMq.GlobalMq.Shutdown()
+	c.Shutdown()
+
 	log.Println("Shutdown Server ...")
 	//stop http listen
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

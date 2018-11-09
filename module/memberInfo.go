@@ -4,22 +4,22 @@ import (
 	"fmt"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"sctek.com/typhoon/th-platform-gateway/manageMq"
-	"time"
+	"strings"
 )
 
 type MemberInfo struct {
-	MemberId int       `xorm:"not null pk comment('会员ID') INT(11)"`
-	CorpId   int       `xorm:"not null default 0 INT(11)"`
-	CardNo   string    `xorm:"not null default '' comment('会员卡号') index VARCHAR(50)"`
-	Name     string    `xorm:"not null default '' comment('会员姓名') VARCHAR(255)"`
-	Mobile   string    `xorm:"not null default '' comment(' 手机号') index VARCHAR(20)"`
-	Sex      int       `xorm:"not null default 0 comment('性别（0：未知，1：男，2：女）') TINYINT(1)"`
-	Birthday time.Time `xorm:"not null comment(' 生日') DATE"`
-	ProvId   int       `xorm:"not null default 0 INT(11)"`
-	CityId   int       `xorm:"not null default 0 INT(11)"`
-	AreaId   int       `xorm:"not null default 0 INT(11)"`
-	Address  string    `xorm:"not null comment('详细地址') TEXT"`
-	Email    string    `xorm:"not null default '' comment('邮箱') VARCHAR(50)"`
+	MemberId int    `xorm:"not null pk comment('会员ID') INT(11)"`
+	CorpId   int    `xorm:"not null default 0 INT(11)"`
+	CardNo   string `xorm:"not null default '' comment('会员卡号') index VARCHAR(50)"`
+	Name     string `xorm:"not null default '' comment('会员姓名') VARCHAR(255)"`
+	Mobile   string `xorm:"not null default '' comment(' 手机号') index VARCHAR(20)"`
+	Sex      int    `xorm:"not null default 0 comment('性别（0：未知，1：男，2：女）') TINYINT(1)"`
+	Birthday string `xorm:"not null comment(' 生日') DATE"`
+	ProvId   int    `xorm:"not null default 0 INT(11)"`
+	CityId   int    `xorm:"not null default 0 INT(11)"`
+	AreaId   int    `xorm:"not null default 0 INT(11)"`
+	Address  string `xorm:"not null comment('详细地址') TEXT"`
+	Email    string `xorm:"not null default '' comment('邮箱') VARCHAR(50)"`
 }
 
 func (m *MemberInfo) TableName() string {
@@ -40,49 +40,55 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 	for _, value := range list {
 		manageMq.ExampleLoggerOutput("phone=" + value.Mobile)
 		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", value.Mobile, message)
-		manageMq.GlobalMq.Publish("fanout", message)
+		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, message)
 		//new(sms.SMSMessage).SendMobileMessage(value.Mobile,message)
 	}
 
 	return nil
 }
 
-//根据会员生日
-func (m *MemberInfo) SendMessageForBirthDay(date, message string) error {
-	common.Log.Infoln("根据会员生日发送信息")
-	phone := "15920038315"
-	msg := "are you sure??"
+
+//全员发送
+func (m *MemberInfo) SendMessageEveryOne(message string) error {
+	common.Log.Infoln("即时全员发送")
 	engine := common.DB
 	list := make([]MemberInfo, 0)
-	err := engine.Select("select * from member_info").Find(&list)
+	err := engine.Select(" * ").Find(&list)
 	if err != nil {
-		common.Log.Errorln(err)
+		common.Log.Warnln(err)
 		manageMq.ExampleLoggerOutput(err.Error())
 		return err
 	}
 	for _, v := range list {
-		_ = v
-		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", phone, msg)
-		manageMq.GlobalMq.Publish("fanout", message)
+		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
+		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, message)
 	}
-
 	return nil
 }
 
-//全员发送
-func(m*MemberInfo)SendMessageEveryOne (message string)error{
-	common.Log.Infoln("即时全员发送")
-	engine:=common.DB
-	list :=make([]MemberInfo,0)
-	err:=engine.Select("select * from member_info").Find(&list)
-	if err!=nil{
+//按照会员生日发送
+func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
+	common.Log.Infoln("按照生日月分发送")
+	subList := strings.Split(birthDat, ",")
+	engine := common.DB
+	list := make([]MemberInfo, 0)
+	err := engine.Find(&list)
+	if err != nil {
 		common.Log.Errorln(err)
-		manageMq.ExampleLoggerOutput(err.Error())
 		return err
 	}
-	for _,v:=range list{
-		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}",v.Mobile,message)
-		manageMq.GlobalMq.Publish("fanout",message)
+	for _, v := range list {
+		if len(v.Birthday) != len("1991-06-14") {
+			continue
+		}
+		month:= v.Birthday[5:7]
+		for _,m:=range subList{
+			if strings.Compare(month,m)==0|| strings.Compare(month,"0"+m)==0{
+				message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
+				manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, message)
+				continue
+			}
+		}
 	}
 	return nil
 }

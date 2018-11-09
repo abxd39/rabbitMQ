@@ -8,6 +8,7 @@ import (
 	"github.com/streadway/amqp"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/sms"
 	"strings"
 )
 
@@ -25,8 +26,8 @@ func newMessageManageMa() *MessageManageMq {
 	mesMq := &MessageManageMq{
 		conn:    nil,
 		channel: nil,
-		tag:     "",
-		topics:"",
+		tag:     "manage_message_consumer",
+		topics:  "",
 		done:    make(chan error),
 	}
 	return mesMq
@@ -62,11 +63,14 @@ func (m *MessageManageMq) Connect(uri string) (err error) {
 		common.Log.Errorln(err)
 		return err
 	}
+	go func() {
+		fmt.Printf("closing: %s", <-m.conn.NotifyClose(make(chan *amqp.Error)))
+	}()
 	return nil
 }
 
 func (m *MessageManageMq) ExchangeDeclare(exchange, exchangeType string) error {
-	common.Log.Errorf("got Channel, declaring Exchange (%q)", exchange)
+	common.Log.Errorf("got Channel, declaring Exchange (%q)\r\n", exchange)
 	if err := m.channel.ExchangeDeclare(
 		exchange,     // name of the exchange
 		exchangeType, // type
@@ -101,10 +105,9 @@ func (m *MessageManageMq) QueueDeclare(qName, key, exchange string) error {
 	common.Log.Errorf("declared Queue (%q %d messages, %d consumers), binding to Exchange (key %q)",
 		queue.Name, queue.Messages, queue.Consumers, key)
 
-	m.tag = key
 	if err = m.channel.QueueBind(
 		queue.Name, // name of the queue
-		m.tag,      // bindingKey
+		key,        // bindingKey
 		exchange,   // sourceExchange
 		false,      // noWait
 		nil,        // arguments
@@ -118,9 +121,9 @@ func (m *MessageManageMq) QueueDeclare(qName, key, exchange string) error {
 
 // 发布消息
 func (m *MessageManageMq) Publish(topic, msg string) (err error) {
-	common.Log.Errorf("publish exchangeType=%q,msg=%q", topic, msg)
+	common.Log.Errorf("publish exchangeType=%q,msg=%q\r\n", topic, msg)
 	if m.topics == "" || !strings.Contains(m.topics, topic) {
-		err = m.channel.ExchangeDeclare(topic, "topic", true, false, false, true, nil)
+		err = m.channel.ExchangeDeclare(topic, "fanout", true, false, false, true, nil)
 		if err != nil {
 			return err
 		}
@@ -133,7 +136,7 @@ func (m *MessageManageMq) Publish(topic, msg string) (err error) {
 	})
 	//发布消息失败
 	if err!=nil{
-		ExampleLoggerOutput("消息发布失败！！")
+		ExampleLoggerOutput("消息推送到MQ失败！！")
 	}
 	ExampleLoggerOutput("消息"+msg+"发送成功！！")
 	return nil
@@ -143,14 +146,14 @@ func (m *MessageManageMq) Publish(topic, msg string) (err error) {
 func (m *MessageManageMq) Shutdown() error {
 	// will close() the deliveries channel
 	if err := m.channel.Cancel(m.tag, true); err != nil {
-		return fmt.Errorf("Consumer cancel failed: %s", err)
+		return fmt.Errorf("manageMq cancel failed: %s", err)
 	}
 
 	if err := m.conn.Close(); err != nil {
 		return fmt.Errorf("AMQP connection close error: %s", err)
 	}
 
-	defer common.Log.Infof("AMQP shutdown OK")
+	defer common.Log.Infof("AMQP shutdown Message Manage  OK")
 
 	// wait for handle() to exit
 	return <-m.done
@@ -231,7 +234,11 @@ func Handle(deliveries <-chan amqp.Delivery, done chan error) {
 			common.Log.Errorln(err)
 			return
 		}
-
+		err =new(sms.SMSMessage).SendMobileMessage(body.Phone,body.Message)
+		if err!=nil{
+			//发送失败如何处理
+			//默认丢弃
+		}
 		d.Ack(false)
 	}
 	common.Log.Errorln("handle: deliveries channel closed")

@@ -35,7 +35,7 @@ func (t *TemplateSmsType) SearchOfManageId(mId, templateMessageId int) error {
 		} else if v.Type == 2 { //会员等级
 			new(MemberCard).SendMessageForGrade("1","")
 		} else if v.Type == 3 { //会员生日
-
+			new(MemberInfo).SendMessageOfBirthDay(v.TypeData,message)
 		}
 	}
 	return nil
