@@ -42,10 +42,10 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 
 	}
 	if t.AcceptUserType == 1 { //指定会员
-		if t.SendType == 1 { //即时发
+		if t.SendType == 2 { //即时发
 			log.Println("指定会员——即时发送")
 			new(TemplateSmsType).SearchOfManageId(t.Id, t.TemplateId)
-		} else if t.SendType == 2 { //定时发
+		} else if t.SendType == 1 { //定时发
 			//启动定时器
 			str := "2006-01-02 15:04:05"
 			str = t.SendTime.Format(str)
@@ -80,10 +80,10 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 			common.Log.Infoln(err)
 			return err
 		}
-		if t.SendType == 1 { //即时发
+		if t.SendType == 2 { //即时发
 			log.Println("全员会员——即时发送")
 			new(MemberInfo).SendMessageEveryOne(t.Id,message)
-		} else if t.SendType == 2 { //定时发
+		} else if t.SendType == 1 { //定时发
 			//启动定时器
 			log.Println("全会员——定时发送")
 		EveryMark:

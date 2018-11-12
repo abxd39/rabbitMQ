@@ -11,7 +11,7 @@ func callback(d MSG) {
 	fmt.Println("yf_manage_message  consumer")
 	fmt.Println(string(d.Body))
 	//发送短息
-
+	new(TemplateSmsLog).SendMobileMessage(d.Body)
 }
 
 func errCallback(d MSG) {
@@ -45,6 +45,20 @@ func  UnmarshalMQBody(body []byte) error {
 		common.Log.Errorln(err)
 		return err
 	}
+	//测试
+	//指定会员性别即时发送
+	temp:=new(TemplateSmsManage)
+	temp.AboutIdInfo(34)
+	temp.AboutIdInfo(36)
+	//指定会员性别定时发送
+	//指定会员等级即时发送
+	//指定会员等级定时发送
+	//指定会员定生日即时发送
+	//指定会员生日定时发送
+	//指定手机号即时发送
+	//指定手机号定时发送
+	//全员定时发送
+	//全员即时发送
 	return new(TemplateSmsManage).AboutIdInfo(id)
 }
 

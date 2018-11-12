@@ -41,7 +41,7 @@ func (m*Member) GetMallId(id int)int{
 		return 0
 	}
 	if !has{
-		common.Log.Errorf("会员%d不存在！！",id)
+		common.Log.Errorf("会员%d不存在！！\r\n",id)
 		return 0
 	}
 	return m.MallId

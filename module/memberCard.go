@@ -23,28 +23,28 @@ type MemberCard struct {
 	IsTimeDelete      int       `xorm:"not null default 0 comment('是否定时删除（0：否，1：是）') TINYINT(1)"`
 }
 
-func (m* MemberCard) TableName() string {
+func (m *MemberCard) TableName() string {
 	return "member_card"
 }
 
 type mobile struct {
-	Mobile string `json:"mobile"`
-	Level  int    `json:"level"`
-	CardNo string `json:"card_no"`
-	MemberId int 	`json:"member_id"`
-	CorpId int `json:"corp_id"`
+	Mobile   string `json:"mobile"`
+	Level    int    `json:"level"`
+	CardNo   string `json:"card_no"`
+	MemberId int    `json:"member_id"`
+	CorpId   int    `json:"corp_id"`
 }
 
-func (m*mobile) TableName()string{
+func (m *mobile) TableName() string {
 	return "member_card"
 }
 
 //根据会员等级发送
-func (m *MemberCard) SendMessageForGrade(manageId int,grade, message string) error {
+func (m *MemberCard) SendMessageForGrade(manageId int, grade, message string) error {
 	common.Log.Infoln("根据会员等级把消息压入mq队列")
 	engine := common.DB
 
-	query := engine.Join("left", "member_info", "car_no==id")
+	query := engine.Join("left", "member_info", "card_no==id")
 	query = query.In("level", grade)
 
 	list := make([]mobile, 0)
@@ -56,21 +56,21 @@ func (m *MemberCard) SendMessageForGrade(manageId int,grade, message string) err
 	}
 
 	for _, v := range list {
-		sendLog:=new(TemplateSmsLog)
-		sendLog.TemplateManageId =manageId
+		sendLog := new(TemplateSmsLog)
+		sendLog.TemplateManageId = manageId
 		sendLog.MemberId = v.MemberId
 		sendLog.CorpId = v.CorpId
 		sendLog.Mobile = v.Mobile
 		sendLog.MallId = new(Member).GetMallId(v.MemberId)
-		if sendLog.MallId ==0{
+		if sendLog.MallId == 0 {
 			continue
 		}
-		result,err:=sendLog.marshalJson(message)
-		if err!=nil{
+		result, err := sendLog.marshalJson(message)
+		if err != nil {
 			common.Log.Errorln(err)
 			continue
 		}
-		Push("myPusher","rmq_test",result)
+		Push("myPusher", "rmq_test", result)
 	}
 	return nil
 }
