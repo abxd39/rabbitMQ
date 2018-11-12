@@ -3,16 +3,14 @@ package module
 import (
 	"errors"
 	"flag"
-	"fmt"
 	"github.com/koding/multiconfig"
-	"go-rabbitmq/rmq"
-	"go-rabbitmq/rmq/amqp"
+	"github.com/streadway/amqp"
 	"os"
 	"time"
 )
 
 type MqFlagConfig struct {
-	ConfigFile string `default:"E:/WorkSpace/src/go-rabbitmq/example/rmq.json"`
+	ConfigFile string `json:"config_file" default:"E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/rmq.json"`
 }
 
 //连接结构
@@ -442,22 +440,18 @@ func Init() (err error) {
 }
 
 func Receive() error {
-	if err := rmq.Pop("myPoper", callback); err != nil {
-		fmt.Println(err)
+	if err := Pop("myPoper", callback); err != nil {
 		return err
 	}
 
-	if err := rmq.Pop("errPoper", errCallback); err != nil {
-		fmt.Println(err)
+	if err := Pop("errPoper", errCallback); err != nil {
 		return err
 	}
 
-	if err := rmq.Pop("dlxPoper", dlxCallback); err != nil {
-		fmt.Println(err)
+	if err := Pop("dlxPoper", dlxCallback); err != nil {
 		return err
 	}
-	if err := rmq.Pop("first", otherCallback); err != nil {
-		fmt.Println(err)
+	if err := Pop("first", otherCallback); err != nil {
 		return err
 	}
 	return nil

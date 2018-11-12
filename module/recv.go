@@ -3,27 +3,26 @@ package module
 import (
 	"encoding/json"
 	"fmt"
-	"go-rabbitmq/rmq"
 	"sctek.com/pingtai/consumer/common"
 )
 
-func callback(d rmq.MSG) {
+func callback(d MSG) {
 	fmt.Println("yf_manage_message  consumer")
 	fmt.Println(string(d.Body))
 	//发送短息
 }
 
-func errCallback(d rmq.MSG) {
+func errCallback(d MSG) {
 	fmt.Println("errServerQueue consumer")
 	fmt.Println(string(d.Body))
 }
 
-func dlxCallback(d rmq.MSG) {
+func dlxCallback(d MSG) {
 	fmt.Println("dlxQueue consumer")
 	fmt.Println(string(d.Body))
 }
 
-func otherCallback(d rmq.MSG) {
+func otherCallback(d MSG) {
 	fmt.Println("yf_sms_send consumer ")
 	fmt.Println(string(d.Body))
 	UnmarshalMQBody(d.Body)

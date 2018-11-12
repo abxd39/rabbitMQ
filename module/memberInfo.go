@@ -1,9 +1,7 @@
 package module
 
 import (
-
 	"fmt"
-	"go-rabbitmq/rmq"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"strings"
@@ -108,6 +106,6 @@ func (m *MemberInfo) SendMessageOfPhone(Phone, message string) error {
 		return err
 	}
 	temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", Phone, message)
-	rmq.Push("myPusher","rmq_test",[]byte(temp))
+	Push("myPusher","rmq_test",[]byte(temp))
 	return nil
 }
