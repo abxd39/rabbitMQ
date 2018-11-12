@@ -1,7 +1,6 @@
 package manageMq
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -50,7 +49,7 @@ func InitMq()  {
 }
 
 func (m *MessageManageMq) Connect(uri string) (err error) {
-	common.Log.Errorf("dialing %q", uri)
+	common.Log.Errorf("连接manageMq %q\r\n", uri)
 	m.conn, err = amqp.Dial(uri)
 	if err != nil {
 		fmt.Println("链接失败！！", uri)
@@ -66,11 +65,12 @@ func (m *MessageManageMq) Connect(uri string) (err error) {
 	go func() {
 		fmt.Printf("closing: %s", <-m.conn.NotifyClose(make(chan *amqp.Error)))
 	}()
+	common.Log.Errorln("连接成功")
 	return nil
 }
 
 func (m *MessageManageMq) ExchangeDeclare(exchange, exchangeType string) error {
-	common.Log.Errorf("got Channel, declaring Exchange (%q)\r\n", exchange)
+	common.Log.Errorf("交换器声明 (%q)\r\n", exchange)
 	if err := m.channel.ExchangeDeclare(
 		exchange,     // name of the exchange
 		exchangeType, // type
@@ -84,11 +84,12 @@ func (m *MessageManageMq) ExchangeDeclare(exchange, exchangeType string) error {
 		common.Log.Errorln(err)
 		return err
 	}
+	common.Log.Errorf("交换器 (%q)声明成功\r\n", exchange)
 	return nil
 }
 
 func (m *MessageManageMq) QueueDeclare(qName, key, exchange string) error {
-	common.Log.Errorf("declared Exchange, declaring Queue %q", qName)
+	common.Log.Errorf("队列%q声明\r\n", qName)
 	queue, err := m.channel.QueueDeclare(
 		qName, // name of the queue
 		true,  // durable
@@ -116,6 +117,7 @@ func (m *MessageManageMq) QueueDeclare(qName, key, exchange string) error {
 		common.Log.Errorln(err)
 		return err
 	}
+	common.Log.Errorf("队列%q声明成功\r\n", qName)
 	return nil
 }
 
@@ -136,9 +138,9 @@ func (m *MessageManageMq) Publish(topic, msg string) (err error) {
 	})
 	//发布消息失败
 	if err!=nil{
-		ExampleLoggerOutput("消息推送到MQ失败！！")
+		log.Println("消息推送到MQ失败！！")
 	}
-	ExampleLoggerOutput("消息"+msg+"发送成功！！")
+	log.Println("消息"+msg+"发送成功！！")
 	return nil
 }
 
@@ -234,7 +236,7 @@ func Handle(deliveries <-chan amqp.Delivery, done chan error) {
 			common.Log.Errorln(err)
 			return
 		}
-		err =new(sms.SMSMessage).SendMobileMessage(body.Phone,body.Message)
+		new(sms.SMSMessage).SendMobileMessage(body.Phone,body.Message)
 		if err!=nil{
 			//发送失败如何处理
 			//默认丢弃
@@ -246,19 +248,19 @@ func Handle(deliveries <-chan amqp.Delivery, done chan error) {
 }
 
 //临时封装临时用一下
-func ExampleLoggerOutput(info string) {
-	var (
-		buf    bytes.Buffer
-		logger = log.New(&buf, "INFO: ", log.Lshortfile)
-
-		infoMessage = func(info string) {
-			logger.Output(2, info)
-		}
-	)
-
-	infoMessage(info)
-
-	fmt.Print(&buf)
-	// Output:
-	// INFO: example_test.go:36: Hello world
-}
+//func ExampleLoggerOutput(info string) {
+//	var (
+//		buf    bytes.Buffer
+//		logger = log.New(&buf, "INFO: ", log.Lshortfile)
+//
+//		infoMessage = func(info string) {
+//			logger.Output(2, info)
+//		}
+//	)
+//
+//	infoMessage(info)
+//
+//	fmt.Print(&buf)
+//	// Output:
+//	// INFO: example_test.go:36: Hello world
+//}

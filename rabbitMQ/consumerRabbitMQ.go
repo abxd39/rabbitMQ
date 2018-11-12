@@ -8,6 +8,7 @@ import (
 	"sctek.com/typhoon/th-platform-gateway/common"
 	db "sctek.com/typhoon/th-platform-gateway/module"
 	"strconv"
+	"time"
 )
 
 type Consumer struct {
@@ -151,6 +152,20 @@ func (c *Consumer) UnmarshalMQBody(body []byte) error {
 		return err
 	}
 	return new(db.TemplateSmsManage).AboutIdInfo(value)
+}
+
+func Run_project() {
+	log.Println("测试manageMq能否可以正常压入数据")
+	temp := new(db.TemplateSmsManage)
+	temp.AboutIdInfo(12)
+	for i := 0; i < 100; i++ {
+		for j:=1;j<30;j++{
+			time.Sleep(1 * time.Second)
+			log.Printf("第%d次推送消息到manageMq", i)
+			new(db.TemplateSmsManage).AboutIdInfo(j)
+		}
+
+	}
 }
 
 

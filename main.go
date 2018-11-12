@@ -9,8 +9,9 @@ import (
 	"os"
 	"os/signal"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"sctek.com/typhoon/th-platform-gateway/rabbitMQ"
+	_"sctek.com/typhoon/th-platform-gateway/rabbitMQ"
+	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"sctek.com/typhoon/th-platform-gateway/router"
 	"time"
 )
@@ -38,33 +39,35 @@ func main() {
 		}
 	}()
 	fmt.Println("mq status")
-	log.Println("Uri=", common.Config.Mq.Uri)
-	log.Println("uName=", common.Config.Mq.QueueName)
-	c, err := rabbitMQ.NewConsumer(common.Config.Mq.Uri, common.Config.Mq.Exchange, common.Config.Mq.ExchangeType, common.Config.Mq.QueueName, common.Config.Mq.Key, common.Config.Mq.ConsumerTag)
-	if err != nil {
-		common.Log.Infoln(err)
-		panic("mq链接失败")
-	}
+	log.Printf("%q\n", common.Config.Mq)
+	log.Printf("%q\n", common.Config.ManageMq)
 
+	//c, err := rabbitMQ.NewConsumer(common.Config.Mq.Uri, common.Config.Mq.Exchange, common.Config.Mq.ExchangeType, common.Config.Mq.QueueName, common.Config.Mq.Key, common.Config.Mq.ConsumerTag)
+	//if err != nil {
+	//	common.Log.Infoln(err)
+	//	panic("mq链接失败")
+	//}
+	//
 	//短息的发送内容mq管理
 	manageMq.InitMq()
 
 	manageMq.GlobalMq.ReceiveMessage(common.Config.ManageMq.QueueName)
 	//Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 30 seconds.
+	//a timeout of 30 seconds.
+	rabbitMQ.Run_project()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
 
 	//关闭mq
 	manageMq.GlobalMq.Shutdown()
-	c.Shutdown()
+	//c.Shutdown()
 
 	log.Println("Shutdown Server ...")
 	//stop http listen
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-	err = srv.Shutdown(ctx)
+	err := srv.Shutdown(ctx)
 	if err != nil {
 		log.Fatalln("Server Shutdown:", err)
 	}

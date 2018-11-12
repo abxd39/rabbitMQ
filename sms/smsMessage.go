@@ -92,6 +92,8 @@ func execTask(url string, msg string) string {
 type SMSMessage struct{}
 
 func (s *SMSMessage) SendMobileMessage(phone, message string) error {
+	fmt.Println("短息发送成功",phone,message)
+	return nil
 	params := make(map[string]interface{})
 	params["mobile"] = phone
 	params["msg"] = message
@@ -122,9 +124,8 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(body))
 	log.Printf("发送短息的url:=%s", url)
-	log.Printf("返回值=%s",string(body))
+	//log.Printf("返回值=%s",string(body))
 	err = json.Unmarshal(body, rsp)
 	if err != nil {
 		return err
@@ -132,5 +133,6 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	if rsp.Code != 0 {
 		return fmt.Errorf(rsp.Msg)
 	}
+	fmt.Println("短息发送成功^~^")
 	return nil
 }

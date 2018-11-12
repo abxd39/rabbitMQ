@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"sctek.com/typhoon/th-platform-gateway/manageMq"
 	"time"
@@ -50,12 +51,12 @@ func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 	err := query.Find(&list)
 	if err != nil {
 		common.Log.Infoln(err)
-		manageMq.ExampleLoggerOutput(err.Error())
+		log.Print(err.Error())
 		return err
 	}
 	for _, v := range list {
-		message = fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, message)
+		Temp:= fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
+		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, Temp)
 	}
 	return nil
 }
