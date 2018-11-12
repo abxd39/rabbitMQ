@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/sms"
 	"strconv"
 )
 
@@ -12,16 +11,7 @@ func callback(d MSG) {
 	fmt.Println("yf_manage_message  consumer")
 	fmt.Println(string(d.Body))
 	//发送短息
-	result:=&struct {
-		Phone string `json:"phone"`
-		Message string `json:"message"`
-	}{}
-	err:=json.Unmarshal(d.Body,result)
-	if err!=nil{
-		common.Log.Errorln(err)
-		return
-	}
-	new(sms.SMSMessage).SendMobileMessage(result.Phone,result.Message)
+
 }
 
 func errCallback(d MSG) {

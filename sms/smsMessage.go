@@ -101,7 +101,7 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	reader := bytes.NewReader(bytesData)
-	url := "http://mall-api.dev-ibc.snsshop.net/ec_crm/sms/qcloud_send?"
+	url := "http://mall-api.dev-ibc.snsshop.net/ec_crm/sms/qcloud-send?"
 	request, err := http.NewRequest("POST", url, reader)
 	if err != nil {
 		return err

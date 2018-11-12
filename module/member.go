@@ -1,6 +1,7 @@
 package module
 
 import (
+	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
 
@@ -28,6 +29,20 @@ type Member struct {
 	Created           time.Time `xorm:"not null comment('创建时间') DATETIME"`
 }
 
-func (a Member) TableName() string {
+func (m* Member) TableName() string {
 	return "member"
+}
+
+func (m*Member) GetMallId(id int)int{
+	engine:=common.DB
+	has,err:=engine.Where("id=?",id).Get(m)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return 0
+	}
+	if !has{
+		common.Log.Errorf("会员%d不存在！！",id)
+		return 0
+	}
+	return m.MallId
 }

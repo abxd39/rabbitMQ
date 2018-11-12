@@ -1,7 +1,6 @@
 package module
 
 import (
-	"encoding/json"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
@@ -32,6 +31,8 @@ type mobile struct {
 	Mobile string `json:"mobile"`
 	Level  int    `json:"level"`
 	CardNo string `json:"card_no"`
+	MemberId int 	`json:"member_id"`
+	CorpId int `json:"corp_id"`
 }
 
 func (m*mobile) TableName()string{
@@ -39,7 +40,7 @@ func (m*mobile) TableName()string{
 }
 
 //根据会员等级发送
-func (m *MemberCard) SendMessageForGrade(grade, message string) error {
+func (m *MemberCard) SendMessageForGrade(manageId int,grade, message string) error {
 	common.Log.Infoln("根据会员等级把消息压入mq队列")
 	engine := common.DB
 
@@ -55,7 +56,16 @@ func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 	}
 
 	for _, v := range list {
-		result,err:=marshalJson(v.Mobile,message)
+		sendLog:=new(TemplateSmsLog)
+		sendLog.TemplateManageId =manageId
+		sendLog.MemberId = v.MemberId
+		sendLog.CorpId = v.CorpId
+		sendLog.Mobile = v.Mobile
+		sendLog.MallId = new(Member).GetMallId(v.MemberId)
+		if sendLog.MallId ==0{
+			continue
+		}
+		result,err:=sendLog.marshalJson(message)
 		if err!=nil{
 			common.Log.Errorln(err)
 			continue
@@ -63,12 +73,4 @@ func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 		Push("myPusher","rmq_test",result)
 	}
 	return nil
-}
-
-
-func marshalJson( phone,message string)([]byte,error){
-	body := make(map[string]string)
-	body["phone"]=phone
-	body["message"]=message
-	return json.Marshal(body)
 }

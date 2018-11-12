@@ -26,7 +26,7 @@ func (m *MemberInfo) TableName() string {
 	return "member_info"
 }
 
-func (m *MemberInfo) SendMessageForSex(sex, message string) error {
+func (m *MemberInfo) SendMessageForSex(manageId int,sex, message string) error {
 	common.Log.Infoln("根据性别发送短息")
 	engine := common.DB
 	list := make([]MemberInfo, 0)
@@ -38,8 +38,17 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 	}
 	//发送短信
 	for _, v := range list {
+		sendLog:=new(TemplateSmsLog)
+		sendLog.TemplateManageId =manageId
+		sendLog.MemberId = v.MemberId
+		sendLog.CorpId = v.CorpId
+		sendLog.Mobile = v.Mobile
+		sendLog.MallId = new(Member).GetMallId(v.MemberId)
+		if sendLog.MallId ==0{
+			continue
+		}
 
-		result,err:=marshalJson(v.Mobile,message)
+		result,err:=sendLog.marshalJson(message)
 		if err!=nil{
 			common.Log.Errorln(err)
 			continue
@@ -51,7 +60,7 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 }
 
 //全员发送
-func (m *MemberInfo) SendMessageEveryOne(message string) error {
+func (m *MemberInfo) SendMessageEveryOne(manageId int,message string) error {
 	common.Log.Infoln("即时全员发送")
 	engine := common.DB
 	list := make([]MemberInfo, 0)
@@ -62,7 +71,16 @@ func (m *MemberInfo) SendMessageEveryOne(message string) error {
 		return err
 	}
 	for _, v := range list {
-		result,err:=marshalJson(v.Mobile,message)
+		sendLog:=new(TemplateSmsLog)
+		sendLog.TemplateManageId =manageId
+		sendLog.MemberId = v.MemberId
+		sendLog.CorpId = v.CorpId
+		sendLog.Mobile = v.Mobile
+		sendLog.MallId = new(Member).GetMallId(v.MemberId)
+		if sendLog.MallId ==0{
+			continue
+		}
+		result,err:=sendLog.marshalJson(message)
 		if err!=nil{
 			common.Log.Errorln(err)
 			continue
@@ -73,7 +91,7 @@ func (m *MemberInfo) SendMessageEveryOne(message string) error {
 }
 
 //按照会员生日发送
-func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
+func (m *MemberInfo) SendMessageOfBirthDay(manageId int,birthDat, message string) error {
 	common.Log.Infoln("按照生日月分发送")
 	subList := strings.Split(birthDat, ",")
 	engine := common.DB
@@ -90,7 +108,16 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 		month := v.Birthday[5:7]
 		for _, m := range subList {
 			if strings.Compare(month, m) == 0 || strings.Compare(month, "0"+m) == 0 {
-				result,err:=marshalJson(v.Mobile,message)
+				sendLog:=new(TemplateSmsLog)
+				sendLog.TemplateManageId =manageId
+				sendLog.MemberId = v.MemberId
+				sendLog.CorpId = v.CorpId
+				sendLog.Mobile = v.Mobile
+				sendLog.MallId = new(Member).GetMallId(v.MemberId)
+				if sendLog.MallId ==0{
+					continue
+				}
+				result,err:=sendLog.marshalJson(message)
 				if err !=nil{
 					common.Log.Errorln(err)
 					continue
@@ -104,7 +131,7 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 }
 
 //指定电话号码发送短息
-func (m *MemberInfo) SendMessageOfPhone(Phone, message string) error {
+func (m *MemberInfo) SendMessageOfPhone(manageId int,Phone, message string) error {
 	common.Log.Infoln("指定电话号码发送短息")
 	engine := common.DB
 	has, err := engine.Where("mobile=?", Phone).Get(m)
@@ -117,7 +144,16 @@ func (m *MemberInfo) SendMessageOfPhone(Phone, message string) error {
 		common.Log.Errorln(err)
 		return err
 	}
-	result,err:=marshalJson(Phone,message)
+	sendLog:=new(TemplateSmsLog)
+	sendLog.TemplateManageId =manageId
+	sendLog.MemberId = m.MemberId
+	sendLog.CorpId = m.CorpId
+	sendLog.Mobile = m.Mobile
+	sendLog.MallId = new(Member).GetMallId(m.MemberId)
+	if sendLog.MallId ==0{
+		return fmt.Errorf("会员%d不存在！！",m.MemberId)
+	}
+	result,err:=sendLog.marshalJson(message)
 	if err!=nil{
 		common.Log.Errorln(err)
 		return err

@@ -25,9 +25,6 @@ type TemplateSmsManage struct {
 	Delete         int       `xorm:"default 0 comment('0-正常；1-删除') TINYINT(1)"`
 }
 
-func GlobalFull()error{
-	return nil
-}
 
 func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 	common.Log.Infoln("从mq 中获取消息id AboutIdInfo")
@@ -85,7 +82,7 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 		}
 		if t.SendType == 1 { //即时发
 			log.Println("全员会员——即时发送")
-			new(MemberInfo).SendMessageEveryOne(message)
+			new(MemberInfo).SendMessageEveryOne(t.Id,message)
 		} else if t.SendType == 2 { //定时发
 			//启动定时器
 			log.Println("全会员——定时发送")
@@ -105,7 +102,7 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 				//判断是否到发送时间
 				if t.SendTime.Unix() <= tim.Unix() {
 					log.Println("指定会员——定时发送")
-					new(MemberInfo).SendMessageEveryOne(message)
+					new(MemberInfo).SendMessageEveryOne(t.Id,message)
 					break EveryMark
 				}
 			}
@@ -119,7 +116,7 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 		}
 		if t.SendType == 1 { //即时发
 			log.Println("指定手机号——即时发送")
-			new(MemberInfo).SendMessageOfPhone(t.Mobile,message)
+			new(MemberInfo).SendMessageOfPhone(t.Id,t.Mobile,message)
 		} else if t.SendType == 2 { //定时发
 			PhoneMar:
 				for{
@@ -137,7 +134,7 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 					//判断是否到发送时间
 					if t.SendTime.Unix() <= tim.Unix() {
 						log.Println("指定手机——定时发送")
-						new(MemberInfo).SendMessageOfPhone(t.Mobile,message)
+						new(MemberInfo).SendMessageOfPhone(t.Id,t.Mobile,message)
 						break PhoneMar
 					}
 				}
