@@ -118,7 +118,7 @@ func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 			return err
 		}
 		if t.SendType == 1 { //即时发
-			log.Println("全员会员——即时发送")
+			log.Println("指定手机号——即时发送")
 			new(MemberInfo).SendMessageOfPhone(t.Mobile,message)
 		} else if t.SendType == 2 { //定时发
 			PhoneMar:

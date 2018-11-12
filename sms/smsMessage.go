@@ -92,8 +92,6 @@ func execTask(url string, msg string) string {
 type SMSMessage struct{}
 
 func (s *SMSMessage) SendMobileMessage(phone, message string) error {
-	fmt.Println("短息发送成功",phone,message)
-	return nil
 	params := make(map[string]interface{})
 	params["mobile"] = phone
 	params["msg"] = message
