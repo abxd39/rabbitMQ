@@ -20,22 +20,6 @@ type LoggerConfig struct {
 type ServerConfig struct {
 	Listen      string `default:":5000"`
 	RuntimePath string `default:"runtime"`
-	Mq           struct {
-		Uri          string `json:"uri"`
-		Exchange     string `json:"exchange"`
-		ExchangeType string `json:"exchange_type"`
-		QueueName    string `json:"queue_name"`
-		Key          string `json:"key"`
-		ConsumerTag  string `json:"consumer_tag"`
-	}
-	ManageMq           struct {
-		Uri          string `json:"uri"`
-		Exchange     string `json:"exchange"`
-		ExchangeType string `json:"exchange_type"`
-		QueueName    string `json:"queue_name"`
-		Key          string `json:"key"`
-		ConsumerTag  string `json:"consumer_tag"`
-	}
 	Db          struct {
 		Host        string
 		Port        string `default:"3306"`

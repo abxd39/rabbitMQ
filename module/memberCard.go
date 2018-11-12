@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/manageMq"
+	"sctek.com/typhoon/th-platform-gateway/rmq"
 	"time"
 )
 
@@ -56,7 +56,7 @@ func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 	}
 	for _, v := range list {
 		Temp:= fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, Temp)
+		rmq.Push("myPusher","rmq_test",[]byte(Temp))
 	}
 	return nil
 }

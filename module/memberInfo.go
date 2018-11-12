@@ -1,10 +1,11 @@
 package module
 
 import (
+
 	"fmt"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/manageMq"
+	"sctek.com/typhoon/th-platform-gateway/rmq"
 	"strings"
 )
 
@@ -41,13 +42,11 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 	for _, value := range list {
 		log.Print("phone=" + value.Mobile)
 		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", value.Mobile, message)
-		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, temp)
-		//new(sms.SMSMessage).SendMobileMessage(value.Mobile,message)
+		rmq.Push("myPusher","rmq_test",[]byte(temp))
 	}
 
 	return nil
 }
-
 
 //全员发送
 func (m *MemberInfo) SendMessageEveryOne(message string) error {
@@ -61,8 +60,8 @@ func (m *MemberInfo) SendMessageEveryOne(message string) error {
 		return err
 	}
 	for _, v := range list {
-		temp:= fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, temp)
+		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
+		rmq.Push("myPusher", "rmq_test", []byte(temp))
 	}
 	return nil
 }
@@ -82,11 +81,11 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 		if len(v.Birthday) != len("1991-06-14") {
 			continue
 		}
-		month:= v.Birthday[5:7]
-		for _,m:=range subList{
-			if strings.Compare(month,m)==0|| strings.Compare(month,"0"+m)==0{
+		month := v.Birthday[5:7]
+		for _, m := range subList {
+			if strings.Compare(month, m) == 0 || strings.Compare(month, "0"+m) == 0 {
 				temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-				manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, temp)
+				rmq.Push("myPusher","rmq_test",[]byte(temp))
 				continue
 			}
 		}
@@ -95,20 +94,20 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 }
 
 //指定电话号码发送短息
-func (m*MemberInfo)SendMessageOfPhone(Phone,message string)error{
+func (m *MemberInfo) SendMessageOfPhone(Phone, message string) error {
 	common.Log.Infoln("指定电话号码发送短息")
-	engine:=common.DB
-	has,err:=engine.Where("mobile=?",Phone).Get(m)
-	if err!=nil{
+	engine := common.DB
+	has, err := engine.Where("mobile=?", Phone).Get(m)
+	if err != nil {
 		common.Log.Errorln(err)
 		return err
 	}
-	if !has{
-		err =fmt.Errorf("手机号码为：%v的用户不存在！！",Phone)
+	if !has {
+		err = fmt.Errorf("手机号码为：%v的用户不存在！！", Phone)
 		common.Log.Errorln(err)
 		return err
 	}
 	temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", Phone, message)
-	manageMq.GlobalMq.Publish(common.Config.ManageMq.Exchange, temp)
+	rmq.Push("myPusher","rmq_test",[]byte(temp))
 	return nil
 }

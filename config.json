@@ -23,22 +23,6 @@
     }
     ]
   },
-  "mq":{
-    "uri":"amqp://admin:admin@10.20.20.80:5672//dbees",
-    "exchange":"amq.fanout",
-    "exchange_type":"fanout",
-    "queue_name":"yf_sms_send",
-    "key":"consumer_key",
-    "consumer_tag":"yf_sms_consumer"
-  },
-  "manageMq":{
-    "uri":"amqp://admin:admin@10.20.20.80:5672//dbees",
-    "exchange":"amq.fanout",
-    "exchange_type":"fanout",
-    "queue_name":"yf_manage_message",
-    "key":"manage_key",
-    "consumer_tag":"manage_message_consumer"
-  },
   "redis":{
     "address":"127.0.0.1",
     "password":"123456"
