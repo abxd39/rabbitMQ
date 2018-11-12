@@ -3,9 +3,9 @@ package module
 import (
 
 	"fmt"
+	"go-rabbitmq/rmq"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/rmq"
 	"strings"
 )
 
@@ -42,7 +42,7 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 	for _, value := range list {
 		log.Print("phone=" + value.Mobile)
 		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", value.Mobile, message)
-		rmq.Push("myPusher","rmq_test",[]byte(temp))
+		Push("myPusher","rmq_test",[]byte(temp))
 	}
 
 	return nil
@@ -61,7 +61,7 @@ func (m *MemberInfo) SendMessageEveryOne(message string) error {
 	}
 	for _, v := range list {
 		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		rmq.Push("myPusher", "rmq_test", []byte(temp))
+		Push("myPusher", "rmq_test", []byte(temp))
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 		for _, m := range subList {
 			if strings.Compare(month, m) == 0 || strings.Compare(month, "0"+m) == 0 {
 				temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-				rmq.Push("myPusher","rmq_test",[]byte(temp))
+				Push("myPusher","rmq_test",[]byte(temp))
 				continue
 			}
 		}

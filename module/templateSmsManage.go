@@ -25,6 +25,10 @@ type TemplateSmsManage struct {
 	Delete         int       `xorm:"default 0 comment('0-正常；1-删除') TINYINT(1)"`
 }
 
+func GlobalFull()error{
+	return nil
+}
+
 func (t *TemplateSmsManage) AboutIdInfo(id int) error {
 	engine := common.DB
 	has, err := engine.Where("id=?", id).Where("send_status=1").Get(t)

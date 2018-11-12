@@ -1,4 +1,4 @@
-package rmq
+package module
 
 import (
 	"errors"
@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 )
+
 type MqFlagConfig struct {
 	ConfigFile string `default:"E:/WorkSpace/src/go-rabbitmq/example/rmq.json"`
 }
@@ -44,7 +45,7 @@ type Exchange struct {
 	AutoDeleted bool                   `json:"auto_deleted"`
 	Internal    bool                   `json:"internal"`
 	NoWait      bool                   `json:"no_wait"`
-	Bind        []EBind               `json:"ebind"`
+	Bind        []EBind                `json:"ebind"`
 	Args        map[string]interface{} `json:"args"`
 }
 
@@ -73,7 +74,7 @@ type Pusher struct {
 	Channel      string `json:"channel"`
 	Exchange     string `json:"exchange"`
 	Key          string `json:"key"`
-	Mandatory     bool   `json:"mandatory"`
+	Mandatory    bool   `json:"mandatory"`
 	Immediate    bool   `json:"immediate"`
 	ContentType  string `json:"content_type"`
 	DeliveryMode uint8  `json:"delivery_mode"`
@@ -101,7 +102,7 @@ type mqCfg struct {
 	Popup     []Popup    `json:"popup"`
 }
 
-var _Cfg *mqCfg = new(mqCfg)                                                       //配置文件对象
+var _Cfg *mqCfg = new(mqCfg)                                                     //配置文件对象
 var _ConnectPool map[string]*amqp.Connection = make(map[string]*amqp.Connection) //连接名称:连接对象
 var _ChannelPool map[string]*amqp.Channel = make(map[string]*amqp.Channel)       //信道名称:信道对象
 var _ExchangePool map[string]string = make(map[string]string)                    //交换机名称:所属信道名称
@@ -127,7 +128,7 @@ func loadCfg() (err error) {
 	//}
 	//fmt.Printf("%q\n",_Cfg)
 	//
-	if err = _Cfg.load();err!=nil{
+	if err = _Cfg.load(); err != nil {
 		return err
 	}
 	return nil
@@ -159,7 +160,6 @@ func (c *mqCfg) load() error {
 	err = m.Load(c)
 	return err
 }
-
 
 func CloseConnect(name string) (err error) {
 	if _, ok := _ConnectPool[name]; ok {
@@ -404,7 +404,7 @@ func Fini() (err error) {
 		}
 	}
 	//清空所有缓存
-	_Cfg = new(mqCfg)                                 //配置文件对象
+	_Cfg = new(mqCfg)                                //配置文件对象
 	_ConnectPool = make(map[string]*amqp.Connection) //连接名称:连接对象
 	_ChannelPool = make(map[string]*amqp.Channel)    //信道名称:信道对象
 	_ExchangePool = make(map[string]string)          //交换机名称:所属信道名称
@@ -414,7 +414,6 @@ func Fini() (err error) {
 
 	return nil
 }
-
 
 //初始化
 func Init() (err error) {
@@ -442,7 +441,7 @@ func Init() (err error) {
 	return err
 }
 
-func Receive()error{
+func Receive() error {
 	if err := rmq.Pop("myPoper", callback); err != nil {
 		fmt.Println(err)
 		return err
@@ -457,7 +456,7 @@ func Receive()error{
 		fmt.Println(err)
 		return err
 	}
-	if err:=rmq.Pop("first",otherCallback);err!=nil{
+	if err := rmq.Pop("first", otherCallback); err != nil {
 		fmt.Println(err)
 		return err
 	}
