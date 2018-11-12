@@ -37,10 +37,14 @@ func (m *MemberInfo) SendMessageForSex(sex, message string) error {
 		return err
 	}
 	//发送短信
-	for _, value := range list {
-		log.Print("phone=" + value.Mobile)
-		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", value.Mobile, message)
-		Push("myPusher","rmq_test",[]byte(temp))
+	for _, v := range list {
+
+		result,err:=marshalJson(v.Mobile,message)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		Push("myPusher", "rmq_test", result)
 	}
 
 	return nil
@@ -58,8 +62,12 @@ func (m *MemberInfo) SendMessageEveryOne(message string) error {
 		return err
 	}
 	for _, v := range list {
-		temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		Push("myPusher", "rmq_test", []byte(temp))
+		result,err:=marshalJson(v.Mobile,message)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		Push("myPusher", "rmq_test", result)
 	}
 	return nil
 }
@@ -82,8 +90,12 @@ func (m *MemberInfo) SendMessageOfBirthDay(birthDat, message string) error {
 		month := v.Birthday[5:7]
 		for _, m := range subList {
 			if strings.Compare(month, m) == 0 || strings.Compare(month, "0"+m) == 0 {
-				temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-				Push("myPusher","rmq_test",[]byte(temp))
+				result,err:=marshalJson(v.Mobile,message)
+				if err !=nil{
+					common.Log.Errorln(err)
+					continue
+				}
+				Push("myPusher","rmq_test",result)
 				continue
 			}
 		}
@@ -105,7 +117,11 @@ func (m *MemberInfo) SendMessageOfPhone(Phone, message string) error {
 		common.Log.Errorln(err)
 		return err
 	}
-	temp := fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", Phone, message)
-	Push("myPusher","rmq_test",[]byte(temp))
+	result,err:=marshalJson(Phone,message)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return err
+	}
+	Push("myPusher","rmq_test",result)
 	return nil
 }

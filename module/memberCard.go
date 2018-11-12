@@ -1,7 +1,7 @@
 package module
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
@@ -53,9 +53,22 @@ func (m *MemberCard) SendMessageForGrade(grade, message string) error {
 		log.Print(err.Error())
 		return err
 	}
+
 	for _, v := range list {
-		Temp:= fmt.Sprintf("{\"phone\":\"%q\",\"message\":\"%q\"}", v.Mobile, message)
-		Push("myPusher","rmq_test",[]byte(Temp))
+		result,err:=marshalJson(v.Mobile,message)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		Push("myPusher","rmq_test",result)
 	}
 	return nil
+}
+
+
+func marshalJson( phone,message string)([]byte,error){
+	body := make(map[string]string)
+	body["phone"]=phone
+	body["message"]=message
+	return json.Marshal(body)
 }

@@ -30,6 +30,7 @@ func GlobalFull()error{
 }
 
 func (t *TemplateSmsManage) AboutIdInfo(id int) error {
+	common.Log.Infoln("从mq 中获取消息id AboutIdInfo")
 	engine := common.DB
 	has, err := engine.Where("id=?", id).Where("send_status=1").Get(t)
 	if err != nil {

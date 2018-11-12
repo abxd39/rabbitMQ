@@ -504,7 +504,7 @@ func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, po
 		}
 
 		callback(msg)
-		d.Ack(false)
+		msg.Ack(false)
 		time.Sleep(time.Second)
 	}
 }
