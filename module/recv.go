@@ -8,30 +8,31 @@ import (
 )
 
 func callback(d MSG) {
-	fmt.Println("yf_manage_message  consumer")
+	common.Log.Infoln("yf_manage_message  consumer")
 	fmt.Println(string(d.Body))
 	//发送短息
 	new(TemplateSmsLog).SendMobileMessage(d.Body)
 }
 
 func errCallback(d MSG) {
-	fmt.Println("errServerQueue consumer")
+	common.Log.Infoln("errServerQueue consumer")
 	fmt.Println(string(d.Body))
 }
 
 func dlxCallback(d MSG) {
-	fmt.Println("dlxQueue consumer")
+	common.Log.Infoln("dlxQueue consumer")
 	fmt.Println(string(d.Body))
 }
 
 func otherCallback(d MSG) {
-	fmt.Println("yf_sms_send consumer ")
+	common.Log.Infoln("yf_sms_send consumer ")
 	fmt.Println(string(d.Body))
 	UnmarshalMQBody(d.Body)
 }
 
 func  UnmarshalMQBody(body []byte) error {
 	//log.Println(string(body))
+	common.Log.Infoln("数据库条目 id 解码")
 	result := &struct {
 		Id string `json:"id"`
 	}{}

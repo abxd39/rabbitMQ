@@ -1,8 +1,6 @@
 package sms
 
-import (
-	_ "sctek.com/pingtai/consumer/common"
-)
+
 
 var ChanPushMsgs chan *SmsMsgStruct // = make(chan *SmsMsgStruct, 200)
 
