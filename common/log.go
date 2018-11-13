@@ -27,7 +27,7 @@ func NewLogger(logfile string, tracelevel int) (*Logger, error) {
 		logger.trace = log.New(w, "[T] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		logger.info = log.New(w, "[I] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		logger.warn = log.New(w, "[W] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lmicroseconds)
 		return logger, err
 	}
 }

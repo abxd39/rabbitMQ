@@ -26,7 +26,7 @@
         "internal":false,
         "no_wait":false,
          "ebind":[
-           {"destination":"工作交换机","key":"major_Exchanges","no_wait":false}
+           {"destination":"amp.wyw.test.new","key":"major_Exchanges","no_wait":false}
          ],
         "args":{
             "alternate-exchange":"errServerExchange"
@@ -40,7 +40,7 @@
         "internal":true,
         "no_wait":false,
          "ebind":[
-           {"destination":"异常信息处理交换机","key":"error_Exchanges","no_wait":false}
+           {"destination":"errServerExchange","key":"error_Exchanges","no_wait":false}
          ]
         },
        {"name":"dlxExchange",
@@ -51,7 +51,7 @@
         "internal":true,
         "no_wait":false,
          "ebind":[
-           {"destination":"备用交换机","key":"backup_Exchanges","no_wait":false}
+           {"destination":"dlxExchange","key":"backup_Exchanges","no_wait":false}
          ]
         }
     ],

@@ -43,20 +43,28 @@ func (t *TemplateSmsLog) SendMobileMessage(body []byte) {
 		common.Log.Errorln(err)
 		return
 	}
+	if len(re.Mobile) <= 0 {
+		common.Log.Infof("发送短息的电话号码为空")
+		return
+	}
+	if len(re.Message) <= 0 {
+		common.Log.Infof("发送的内容为空")
+		return
+	}
 	err = new(sms.SMSMessage).SendMobileMessage(re.Mobile, re.Message)
 	if err != nil {
 		common.Log.Errorln(err)
-		t.Status =2
+		t.Status = 2
 	}
 	t.Mobile = re.Mobile
 	t.MemberId = re.MemberId
 	t.CorpId = re.CorpId
-	t.TemplateManageId =re.TemplateManageId
-	t.MallId =re.MallId
-	t.Status =1
-	t.Created = time.Now()//.Format("2006-01-02 15:04:05")
-	_,err=common.DB.InsertOne(t)
-	if err!=nil{
+	t.TemplateManageId = re.TemplateManageId
+	t.MallId = re.MallId
+	t.Status = 1
+	t.Created = time.Now() //.Format("2006-01-02 15:04:05")
+	_, err = common.DB.InsertOne(t)
+	if err != nil {
 		common.Log.Errorln(err)
 	}
 	return
