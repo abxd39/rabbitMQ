@@ -25,6 +25,9 @@
         "auto_deleted":false,
         "internal":false,
         "no_wait":false,
+         "ebind":[
+           {"destination":"工作交换机","key":"major_Exchanges","no_wait":false}
+         ],
         "args":{
             "alternate-exchange":"errServerExchange"
             }
@@ -35,7 +38,10 @@
         "durable":false,
         "auto_deleted":false,
         "internal":true,
-        "no_wait":false
+        "no_wait":false,
+         "ebind":[
+           {"destination":"异常信息处理交换机","key":"error_Exchanges","no_wait":false}
+         ]
         },
        {"name":"dlxExchange",
         "channel":"dlxChannel",
@@ -43,7 +49,10 @@
         "durable":false,
         "auto_deleted":false,
         "internal":true,
-        "no_wait":false
+        "no_wait":false,
+         "ebind":[
+           {"destination":"备用交换机","key":"backup_Exchanges","no_wait":false}
+         ]
         }
     ],
     "queue":[
