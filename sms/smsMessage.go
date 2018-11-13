@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"sctek.com/pingtai/consumer/common"
+	"sctek.com/typhoon/th-platform-gateway/common"
 	"strconv"
 	"time"
 )
