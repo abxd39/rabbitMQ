@@ -1,7 +1,6 @@
 package module
 
 import (
-	"fmt"
 	"sctek.com/typhoon/th-platform-gateway/common"
 )
 
@@ -13,30 +12,41 @@ type TemplateSmsType struct {
 }
 
 //指定会员时的条件筛选
-func (t *TemplateSmsType) SearchOfManageId(mId, templateMessageId int) error {
-	engine := common.DB
-	//获取短息模板
-	message, err := new(TemplateSms).GetText(templateMessageId)
-	if err != nil {
-		common.Log.Infoln(err)
-		return err
-	}
-	list := make([]TemplateSmsType, 0)
-	err = engine.Where("template_manage_id=?", mId).Find(&list)
-	if err != nil {
-		common.Log.Errorln(err)
-		return err
-	}
+//func (t *TemplateSmsType) SearchOfManageId(mId, templateMessageId int) error {
+//	engine := common.DB
+//	//获取短息模板
+//	message, err := new(TemplateSms).GetText(templateMessageId)
+//	if err != nil {
+//		common.Log.Infoln(err)
+//		return err
+//	}
+//	list := make([]TemplateSmsType, 0)
+//	err = engine.Where("template_manage_id=?", mId).Find(&list)
+//	if err != nil {
+//		common.Log.Errorln(err)
+//		return err
+//	}
+//
+//	for _, v := range list {
+//		fmt.Println("指定发送给谁",v.Type)
+//		if v.Type == 1 { //姓别
+//			new(MemberInfo).SendMessageForSex(mId,v.TypeData, message)
+//		} else if v.Type == 2 { //会员等级
+//			new(MemberCard).SendMessageForGrade(mId,v.TypeData,message)
+//		} else if v.Type == 3 { //会员生日
+//			new(MemberInfo).SendMessageOfBirthDay(mId,v.TypeData,message)
+//		}
+//	}
+//	return nil
+//}
 
-	for _, v := range list {
-		fmt.Println("指定发送给谁",v.Type)
-		if v.Type == 1 { //姓别
-			new(MemberInfo).SendMessageForSex(mId,v.TypeData, message)
-		} else if v.Type == 2 { //会员等级
-			new(MemberCard).SendMessageForGrade(mId,v.TypeData,message)
-		} else if v.Type == 3 { //会员生日
-			new(MemberInfo).SendMessageOfBirthDay(mId,v.TypeData,message)
-		}
+
+func (t*TemplateSmsType)GetSmsTypeOfId(id int)([]TemplateSmsType,error){
+	engine := common.DB
+	list := make([]TemplateSmsType, 0)
+	err := engine.Where("template_manage_id=?", id).Find(&list)
+	if err != nil {
+		return nil,err
 	}
-	return nil
+	return list,nil
 }

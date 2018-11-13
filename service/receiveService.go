@@ -1,4 +1,4 @@
-package module
+package service
 
 import (
 	"encoding/json"
@@ -9,9 +9,9 @@ import (
 
 func callback(d MSG) {
 	common.Log.Infoln("yf_manage_message  consumer")
-	fmt.Println(string(d.Body))
+	fmt.Printf("接收到的信息为%q",string(d.Body))
 	//发送短息
-	new(TemplateSmsLog).SendMobileMessage(d.Body)
+	new(MarshalJson).UnmarshalJson(d.Body)
 }
 
 func errCallback(d MSG) {
@@ -48,9 +48,10 @@ func  UnmarshalMQBody(body []byte) error {
 	}
 	//测试
 	//指定会员性别即时发送
-	temp:=new(TemplateSmsManage)
-	temp.AboutIdInfo(34)
+	temp:=new(LogicService)
+	temp.AboutIdInfo(4)
 	temp.AboutIdInfo(36)
+	temp.AboutIdInfo(id)
 	//指定会员性别定时发送
 	//指定会员等级即时发送
 	//指定会员等级定时发送
@@ -60,7 +61,7 @@ func  UnmarshalMQBody(body []byte) error {
 	//指定手机号定时发送
 	//全员定时发送
 	//全员即时发送
-	return new(TemplateSmsManage).AboutIdInfo(id)
+	return nil//new(service.LogicService).AboutIdInfo(id)
 }
 
 //func main() {

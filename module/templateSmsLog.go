@@ -18,16 +18,6 @@ type TemplateSmsLog struct {
 	Created          time.Time `xorm:"comment('备注时间') DATETIME"`
 }
 
-func (t *TemplateSmsLog) marshalJson(message string) ([]byte, error) {
-	body := make(map[string]interface{})
-	body["mobile"] = t.Mobile
-	body["message"] = message
-	body["member_id"] = t.MemberId
-	body["corp_id"] = t.CorpId
-	body["mall_id"] = t.MallId
-	body["template_manage_id"] = t.TemplateManageId
-	return json.Marshal(body)
-}
 
 type Result struct {
 	TemplateSmsLog `xorm:"extends"`
@@ -68,4 +58,12 @@ func (t *TemplateSmsLog) SendMobileMessage(body []byte) {
 		common.Log.Errorln(err)
 	}
 	return
+}
+//写发送短息记录
+func(t*TemplateSmsLog)InsertDb()error{
+	_,err:=common.DB.InsertOne(t)
+	if err!=nil{
+		return err
+	}
+	return nil
 }

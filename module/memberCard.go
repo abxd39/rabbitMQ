@@ -1,7 +1,6 @@
 package module
 
 import (
-	"log"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
@@ -40,8 +39,42 @@ func (m *mobile) TableName() string {
 }
 
 //根据会员等级发送
-func (m *MemberCard) SendMessageForGrade(manageId int, grade, message string) error {
-	common.Log.Infoln("根据会员等级把消息压入mq队列")
+//func (m *MemberCard) SendMessageForGrade(manageId int, grade, message string) error {
+//	common.Log.Infoln("根据会员等级把消息压入mq队列")
+//	engine := common.DB
+//
+//	query := engine.Join("left", "member_info", "card_no==id")
+//	query = query.In("level", grade)
+//
+//	list := make([]mobile, 0)
+//	err := query.Find(&list)
+//	if err != nil {
+//		common.Log.Infoln(err)
+//		log.Print(err.Error())
+//		return err
+//	}
+//
+//	for _, v := range list {
+//		sendLog := new(TemplateSmsLog)
+//		sendLog.TemplateManageId = manageId
+//		sendLog.MemberId = v.MemberId
+//		sendLog.CorpId = v.CorpId
+//		sendLog.Mobile = v.Mobile
+//		sendLog.MallId = new(Member).GetMallId(v.MemberId)
+//		if sendLog.MallId == 0 {
+//			continue
+//		}
+//		result, err := sendLog.marshalJson(message)
+//		if err != nil {
+//			common.Log.Errorln(err)
+//			continue
+//		}
+//		Push("myPusher", "rmq_test", result)
+//	}
+//	return nil
+//}
+
+func (m*MemberCard) GetMessageOfGrade(grade string)([]mobile,error){
 	engine := common.DB
 
 	query := engine.Join("left", "member_info", "card_no==id")
@@ -50,27 +83,7 @@ func (m *MemberCard) SendMessageForGrade(manageId int, grade, message string) er
 	list := make([]mobile, 0)
 	err := query.Find(&list)
 	if err != nil {
-		common.Log.Infoln(err)
-		log.Print(err.Error())
-		return err
+		return nil ,err
 	}
-
-	for _, v := range list {
-		sendLog := new(TemplateSmsLog)
-		sendLog.TemplateManageId = manageId
-		sendLog.MemberId = v.MemberId
-		sendLog.CorpId = v.CorpId
-		sendLog.Mobile = v.Mobile
-		sendLog.MallId = new(Member).GetMallId(v.MemberId)
-		if sendLog.MallId == 0 {
-			continue
-		}
-		result, err := sendLog.marshalJson(message)
-		if err != nil {
-			common.Log.Errorln(err)
-			continue
-		}
-		Push("myPusher", "rmq_test", result)
-	}
-	return nil
+	return list, nil
 }

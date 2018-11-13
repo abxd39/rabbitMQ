@@ -8,8 +8,8 @@ import (
 	"os"
 	"os/signal"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/module"
 	"sctek.com/typhoon/th-platform-gateway/router"
+	"sctek.com/typhoon/th-platform-gateway/service"
 	"time"
 )
 
@@ -36,9 +36,9 @@ func main() {
 		}
 	}()
 	//mq 初始化
-	common.CheckErr(module.Init())
-	defer  module.Fini()
-	common.CheckErr(module.Receive())
+	common.CheckErr(service.Init())
+	defer  service.Fini()
+	common.CheckErr(service.Receive())
 	//Wait for interrupt signal to gracefully shutdown the server with
 	//a timeout of 30 seconds.
 	quit := make(chan os.Signal)

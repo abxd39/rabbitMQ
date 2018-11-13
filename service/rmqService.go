@@ -1,4 +1,4 @@
-package module
+package service
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 )
 
 type MqFlagConfig struct {
-	ConfigFile string `json:"config_file" default:"rmq.json"`
+	ConfigFile string `json:"config_file" default:"E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/rmq.json"`
 }
 
 //连接结构
