@@ -4,10 +4,10 @@
   "maxWork":10,
   "maxQueueSize":200,
   "db": {
-    "host":"10.20.20.80",
+    "host":"10.20.20.82",
     "name":"typhoon_ibc",
     "user":"root",
-    "password":"typhoon_ibc",
+    "password":"typhoon",
     "maxOpenConns":100,
     "maxIdleConns":10,
     "showSQL":true,
