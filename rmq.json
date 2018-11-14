@@ -18,7 +18,7 @@
         "qos_size":0}
     ],
     "exchanges":[
-       {"name":"amp.wyw.test.new",
+       {"name":"amp.wyw.test",
         "channel":"TestChannel",
         "type":"direct",
         "durable":false,
@@ -26,7 +26,7 @@
         "internal":false,
         "no_wait":false,
          "ebind":[
-           {"destination":"amp.wyw.test.new","key":"major_Exchanges","no_wait":false}
+           {"destination":"amp.wyw.test","key":"major_Exchanges","no_wait":false}
          ],
         "args":{
             "alternate-exchange":"errServerExchange"
