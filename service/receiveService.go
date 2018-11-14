@@ -26,7 +26,7 @@ func dlxCallback(d MSG) {
 
 func otherCallback(d MSG) {
 	common.Log.Infoln("yf_sms_send consumer ")
-	fmt.Println(string(d.Body))
+	fmt.Printf("mq中读到的数据为：%q\r\n",string(d.Body))
 	UnmarshalMQBody(d.Body)
 }
 
@@ -46,22 +46,8 @@ func  UnmarshalMQBody(body []byte) error {
 		common.Log.Errorln(err)
 		return err
 	}
-	//测试
-	//指定会员性别即时发送
-	//temp:=new(LogicService)
-	//temp.AboutIdInfo(4)
-	//temp.AboutIdInfo(36)
 	new(LogicService).AboutIdInfo(id)
-	//指定会员性别定时发送
-	//指定会员等级即时发送
-	//指定会员等级定时发送
-	//指定会员定生日即时发送
-	//指定会员生日定时发送
-	//指定手机号即时发送
-	//指定手机号定时发送
-	//全员定时发送
-	//全员即时发送
-	return nil//new(service.LogicService).AboutIdInfo(id)
+	return nil
 }
 
 //func main() {

@@ -1,7 +1,7 @@
 {
     "connects":[
        {"name":"myConnect",
-        "Addr":"amqp://admin:admin@10.20.20.80:5672//dbees"}
+        "Addr":"amqp://admin:admin@10.100.100.154//dbees"}
     ],
     "channels":[
        {"name":"TestChannel",
@@ -107,7 +107,7 @@
        {"name":"myPoper",
         "channel":"TestChannel",
         "q_name":"yf_manage_message",
-        "consumer":"",
+        "consumer":"主交换机Consumer",
         "AutoACK":true,
         "exclusive":false,
         "no_local":false,
@@ -116,7 +116,7 @@
        {"name":"errPoper",
         "channel":"errChannel",
         "q_name":"errServerQueue",
-        "consumer":"",
+        "consumer":"错误交换机Consumer",
         "AutoACK":true,
         "exclusive":false,
         "no_local":false,
@@ -125,16 +125,16 @@
        {"name":"dlxPoper",
         "channel":"dlxChannel",
         "q_name":"dlxQueue",
-        "consumer":"",
+        "consumer":"备份交换机Consumer",
         "AutoACK":true,
         "exclusive":false,
         "no_local":false,
         "no_wait":false
        },
-       {"name":"first",
+       {"name":"DBDataId",
         "channel":"TestChannel",
         "q_name":"yf_sms_send",
-        "consumer":"",
+        "consumer":"DBDataIdConsumer",
         "AutoACK":true,
         "exclusive":false,
         "no_local":false,
