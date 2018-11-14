@@ -9,8 +9,9 @@ import (
 	"time"
 )
 
+//E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/rmq.json
 type MqFlagConfig struct {
-	ConfigFile string `json:"config_file" default:"E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/rmq.json"`
+	ConfigFile string `json:"config_file" default:"rmq.json"`
 }
 
 //连接结构
