@@ -48,10 +48,10 @@ func  UnmarshalMQBody(body []byte) error {
 	}
 	//测试
 	//指定会员性别即时发送
-	temp:=new(LogicService)
-	temp.AboutIdInfo(4)
-	temp.AboutIdInfo(36)
-	temp.AboutIdInfo(id)
+	//temp:=new(LogicService)
+	//temp.AboutIdInfo(4)
+	//temp.AboutIdInfo(36)
+	new(LogicService).AboutIdInfo(id)
 	//指定会员性别定时发送
 	//指定会员等级即时发送
 	//指定会员等级定时发送

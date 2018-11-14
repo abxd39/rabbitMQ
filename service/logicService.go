@@ -11,14 +11,15 @@ import (
 type LogicService struct {
 }
 
-func (l *LogicService) SendMessage(id, templateId int) error {
+func (l *LogicService) SendMessage(id, templateId int) {
 	list, err := new(module.TemplateSmsType).GetSmsTypeOfId(id)
 	if err != nil {
-		return err
+		common.Log.Errorln(err)
+		return
 	}
 	message, err := new(module.TemplateSms).GetText(templateId)
 	if err != nil {
-		return err
+		return
 	}
 	for _, v := range list {
 		fmt.Println("指定发送给谁", v.Type)
@@ -43,7 +44,7 @@ func (l *LogicService) SendMessage(id, templateId int) error {
 			}
 		}
 	}
-	return nil
+	return
 }
 //根据会员生日
 func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string)error  {
@@ -197,11 +198,12 @@ func (l *LogicService) AboutIdInfo(id int) {
 	tsm:=new(module.TemplateSmsManage)
 	err := tsm.GetManageOfId(id)
 	if err != nil {
+		common.Log.Errorln(err)
 		return
 	}
 	if tsm.AcceptUserType == 1 { //指定会员
 		if tsm.SendType == 2 { //即时发
-			//log.Println("指定会员——即时发送")
+			fmt.Println("指定会员——即时发送")
 			//new(TemplateSmsType).SearchOfManageId(t.Id, t.TemplateId)
 			l.SendMessage(tsm.Id, tsm.TemplateId)
 
@@ -209,7 +211,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 			//启动定时器
 			str := "2006-01-02 15:04:05"
 			str = tsm.SendTime.Format(str)
-			//log.Println("定时发送短息时间是" + str)
+			fmt.Println("定时发送短息时间是" + str)
 		ConditionUser:
 			for {
 				time.Sleep(5 * time.Second)
@@ -221,6 +223,8 @@ func (l *LogicService) AboutIdInfo(id int) {
 				}
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
+
+					fmt.Printf("开始发送时间为%s\r\n",time.Now().Format(str))
 					l.SendMessage(tsm.Id, tsm.TemplateId)
 					break ConditionUser
 				}
@@ -229,6 +233,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 		}
 
 	} else if tsm.AcceptUserType == 2 { //全部会员
+		 fmt.Println("全员发送")
 		//获取短息模板
 		message, err := new(module.TemplateSms).GetText(tsm.TemplateId)
 		if err != nil {
@@ -236,9 +241,12 @@ func (l *LogicService) AboutIdInfo(id int) {
 			return
 		}
 		if tsm.SendType == 2 { //即时发
+			fmt.Println("全员即时发送")
 			l.SendMessageEveryOne(tsm.Id, message)
 		} else if tsm.SendType == 1 { //定时发
 			//启动定时器
+			fmt.Println("全会员——定时发送")
+			str := "2006-01-02 15:04:05"
 			common.Log.Infoln("全会员——定时发送")
 		EveryMark:
 			for {
@@ -251,6 +259,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 				}
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
+					fmt.Printf("全员定时发送时间为%q\r\n",time.Now().Format(str))
 					l.SendMessageEveryOne(tsm.Id, message)
 					break EveryMark
 				}
@@ -258,12 +267,14 @@ func (l *LogicService) AboutIdInfo(id int) {
 		}
 
 	} else if tsm.AcceptUserType == 3 { //指定手机号发送
+		 fmt.Println("指定电话号码发送")
 		message, err := new(module.TemplateSms).GetText(tsm.TemplateId)
 		if err != nil {
 			common.Log.Infoln(err)
 			return
 		}
 		if tsm.SendType == 1 { //即时发
+			fmt.Println("指定电话号码即时发送")
 			err:=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 			if err!=nil{
 				common.Log.Errorln(err)
@@ -282,6 +293,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 				}
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
+					fmt.Printf("指定电话号码定时发送 发送时间%q\r\n",time.Now().Format("2006-01-02 15:04:05"))
 					l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 					break PhoneMar
 				}
