@@ -9,9 +9,9 @@ type Pool struct {
 	wg   sync.WaitGroup
 }
 
-func NewPool() *Pool {
+func NewPool(maxQueueSize int) *Pool {
 	p := Pool{
-		work: make(chan Worker),
+		work: make(chan Worker,maxQueueSize),
 	}
 	return &p
 }

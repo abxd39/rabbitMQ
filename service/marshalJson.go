@@ -3,10 +3,22 @@ package service
 import (
 	"encoding/json"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/common/worker"
 	"sctek.com/typhoon/th-platform-gateway/module"
 	"sctek.com/typhoon/th-platform-gateway/sms"
 	"time"
 )
+
+var pool *worker.Pool
+
+func InitPool(){
+	pool = worker.NewPool(common.Config.MaxQueueSize)
+	pool.Run(common.Config.MaxWork)
+}
+
+func ClosePool(){
+	pool.Shutdown()
+}
 
 type MarshalJson struct {
 	MemberId         int    `json:"member_id"`
@@ -28,6 +40,32 @@ func (m *MarshalJson) marshalJson(message string) ([]byte, error) {
 	return json.Marshal(body)
 }
 
+
+//负责发送短息和写发送记录到数据库
+func (m *MarshalJson) Run() error {
+	ob := new(module.TemplateSmsLog)
+	ob.Status = 1
+	ob.Mobile = m.Mobile
+	ob.MemberId = m.MemberId
+	ob.CorpId = m.CorpId
+	ob.TemplateManageId = m.TemplateManageId
+	ob.MallId = m.MallId
+	err := new(sms.SMSMessage).SendMobileMessage(m.Mobile, m.Msg)
+	if err != nil {
+		common.Log.Errorln(err)
+		ob.Status = 2
+	}
+
+	ob.Created = time.Now() //.Format("2006-01-02 15:04:05")
+	err = ob.InsertDb()
+	if err != nil {
+		common.Log.Errorln(err)
+	}
+	return nil
+}
+
+
+
 func (m *MarshalJson) UnmarshalJson(body []byte) {
 	common.Log.Traceln("开始发送短息")
 	err := json.Unmarshal(body, m)
@@ -44,23 +82,8 @@ func (m *MarshalJson) UnmarshalJson(body []byte) {
 		common.Log.Infof("发送的内容为空")
 		return
 	}
-	ob:=new(module.TemplateSmsLog)
-	ob.Status = 1
-	ob.Mobile = m.Mobile
-	ob.MemberId = m.MemberId
-	ob.CorpId = m.CorpId
-	ob.TemplateManageId = m.TemplateManageId
-	ob.MallId = m.MallId
-	err = new(sms.SMSMessage).SendMobileMessage(m.Mobile, m.Msg)
-	if err != nil {
-		common.Log.Errorln(err)
-		ob.Status = 2
-	}
 
-	ob.Created = time.Now() //.Format("2006-01-02 15:04:05")
-	err = ob.InsertDb()
-	if err != nil {
-		common.Log.Errorln(err)
-	}
+	pool.Add(m)
+
 	return
 }

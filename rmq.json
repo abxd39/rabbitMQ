@@ -18,7 +18,7 @@
         "qos_size":0}
     ],
     "exchanges":[
-       {"name":"amp.wyw.test",
+       {"name":"smsExchange",
         "channel":"TestChannel",
         "type":"direct",
         "durable":false,
@@ -26,7 +26,7 @@
         "internal":false,
         "no_wait":false,
          "ebind":[
-           {"destination":"amp.wyw.test","key":"major_Exchanges","no_wait":false}
+           {"destination":"smsExchange","key":"major_Exchanges","no_wait":false}
          ],
         "args":{
             "alternate-exchange":"errServerExchange"
@@ -63,7 +63,7 @@
         "exclusive":false,
         "no_wait":false,
         "qbind":[
-            {"Key":"yf_manage_message", "exchange_name":"amp.wyw.test", "no_wait":false}
+            {"Key":"yf_manage_message", "exchange_name":"smsExchange", "no_wait":false}
         ],
         "args":{
             "x-message-ttl":10,
@@ -96,7 +96,7 @@
     "pusher":[
        {"name":"myPusher",
         "channel":"TestChannel",
-        "exchange":"amp.wyw.test",
+        "exchange":"smsExchange",
         "Key":"yf_manage_message",
         "mandatory":false,
         "immediate":false,

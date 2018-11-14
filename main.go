@@ -37,6 +37,9 @@ func main() {
 	}()
 	//mq 初始化
 	common.CheckErr(service.Init())
+	//工作池初始化
+	service.InitPool()
+	defer service.ClosePool()
 	defer  service.Fini()
 	common.CheckErr(service.Receive())
 	//Wait for interrupt signal to gracefully shutdown the server with

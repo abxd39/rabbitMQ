@@ -29,7 +29,7 @@
   },
   "log": {
     "traceLevel": 1,
-    "logFile":"th-open-api.log"
+    "logFile":"th-platform-gateway.log"
   },
   "gate_way":{
     "host":"127.0.0.1"
