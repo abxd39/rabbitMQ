@@ -195,6 +195,7 @@ func(l*LogicService)SendMessageOfMobile(id int, typeDate,msg string)error{
 func (l *LogicService) AboutIdInfo(id int) {
 	//再此处理逻辑业务
 	//判断怎么发送 发送那些人
+	count:=0
 	tsm:=new(module.TemplateSmsManage)
 	err := tsm.GetManageOfId(id)
 	if err != nil {
@@ -294,12 +295,20 @@ func (l *LogicService) AboutIdInfo(id int) {
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
 					fmt.Printf("指定电话号码定时发送 发送时间%q\r\n",time.Now().Format("2006-01-02 15:04:05"))
-					l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
+					err:=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
+					if err!=nil{
+						common.Log.Errorln(err)
+						break PhoneMar
+					}
 					break PhoneMar
 				}
 			}
 
 		}
 	}
-
+	//更新状态
+	err=tsm.UpdateStatus(tsm.Id,count)
+	if err!=nil{
+		common.Log.Errorln(err)
+	}
 }

@@ -28,7 +28,7 @@ type TemplateSmsManage struct {
 func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
 	common.Log.Infoln("从mq 中获取消息id AboutIdInfo")
 	engine := common.DB
-	has, err := engine.Where("id=?", id).Where("send_status=1").Get(t)
+	has, err := engine.Where("id=?", id).Get(t)
 	if err != nil {
 		return err
 	}
@@ -147,4 +147,19 @@ func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
 	//if count == 0 {
 	//	common.Log.Infoln("短息发送的状态更新数据库失败！！！")
 	//}
+}
+
+
+func (t*TemplateSmsManage) UpdateStatus(id,count int)error{
+	common.Log.Infoln("修改数据库状态")
+	engine:=common.DB
+
+	_,err:=engine.Cols("send_count","updated").Where("id=?",id).Update(&TemplateSmsManage{
+		SendCount:count,
+		Updated:time.Now(),
+	})
+	if err!=nil{
+		return err
+	}
+	return nil
 }
