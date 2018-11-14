@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -16,6 +17,7 @@ import (
 func main() {
 	common.CheckErr(common.LoadConfig())
 	// common.CheckErr(common.OpenRedis())
+	fmt.Println("配置文件")
 	common.CheckErr(common.OpenDb())
 	common.CheckErr(common.SetupLogger())
 	defer common.DB.Close()
