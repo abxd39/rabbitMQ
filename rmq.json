@@ -1,7 +1,7 @@
 {
     "connects":[
        {"name":"myConnect",
-        "Addr":"amqp://admin:admin@10.100.100.154//dbees"}
+        "Addr":"amqp://admin:admin@10.20.20.80//dbees"}
     ],
     "channels":[
        {"name":"TestChannel",
