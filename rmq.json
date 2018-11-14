@@ -24,9 +24,9 @@
         "durable":false,
         "auto_deleted":false,
         "internal":false,
-        "no_wait":false,
+        "no_wait":true,
          "ebind":[
-           {"destination":"smsExchange","key":"major_Exchanges","no_wait":false}
+           {"destination":"smsExchange","key":"major_Exchanges","no_wait":true}
          ],
         "args":{
             "alternate-exchange":"errServerExchange"
@@ -66,7 +66,7 @@
             {"Key":"yf_manage_message", "exchange_name":"smsExchange", "no_wait":false}
         ],
         "args":{
-            "x-message-ttl":10,
+            "x-message-ttl":100,
             "x-dead-letter-exchange":"dlxExchange",
             "x-dead-letter-routing-key":"dlxQueue"
         }},
@@ -80,6 +80,7 @@
             {"Key":"errServerQueue", "exchange_name":"errServerExchange", "no_wait":false}
         ],
         "args":{
+          "":""
         }},
        {"name":"dlxQueue",
         "channel":"dlxChannel",
@@ -91,6 +92,7 @@
             {"Key":"dlxQueue", "exchange_name":"dlxExchange", "no_wait":false}
         ],
         "args":{
+          "":""
         }}
     ],
     "pusher":[

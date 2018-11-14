@@ -4,20 +4,20 @@
   "maxWork":10,
   "maxQueueSize":200,
   "db": {
-    "host":"10.20.20.82",
+    "host":"10.100.100.153",
     "name":"typhoon_ibc",
-    "user":"root",
-    "password":"typhoon",
+    "user":"typhoon_read",
+    "password":"123456",
     "maxOpenConns":100,
     "maxIdleConns":10,
     "showSQL":true,
     "slave_config":{
-      "user":"admin",
-      "password":"admin"
+      "user":"typhoon_read",
+      "password":"123456"
     },
     "slaves":[
       {
-      "host":"10.20.20.82",
+      "host":"10.100.100.153",
         "port":"3306",
         "name":"typhoon_ibc"
     }

@@ -305,8 +305,12 @@ func CreateQueue(v Queue) (err error) {
 		v.Args["x-message-ttl"] = t
 	}
 
+	if !v.NoWait{
+		v.Args= nil
+	}
+
 	if _, err = _ChannelPool[v.Channel].QueueDeclare(v.Name, v.Durable,
-		v.AutoDelete, v.Exclusive, v.NoWait, nil); err != nil {
+		v.AutoDelete, v.Exclusive, v.NoWait, v.Args); err != nil {
 		return err
 	} else {
 		if _, ok := _QueuePool[v.Name]; !ok {
