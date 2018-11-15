@@ -11,46 +11,48 @@ import (
 type LogicService struct {
 }
 
-func (l *LogicService) SendMessage(id, templateId int) {
+func (l *LogicService) SendMessage(id, templateId int)int {
+	count:=0
 	list, err := new(module.TemplateSmsType).GetSmsTypeOfId(id)
 	if err != nil {
 		common.Log.Errorln(err)
-		return
+		return count
 	}
 	message, err := new(module.TemplateSms).GetText(templateId)
 	if err != nil {
-		return
+		return count
 	}
 	for _, v := range list {
 		fmt.Println("指定发送给谁", v.Type)
 		if v.Type == 1 { //姓别
-			err := l.SendMessageForSex(id, v.TypeData, message)
+			count,err = l.SendMessageForSex(id, v.TypeData, message)
 			if err != nil {
 				common.Log.Errorln(err)
 				continue
 			}
 		} else if v.Type == 2 { //会员等级
-			err:=l.SendMessageForGrade(id, v.TypeData, message)
+			count,err=l.SendMessageForGrade(id, v.TypeData, message)
 			if err!=nil{
 				common.Log.Errorln(err)
 				continue
 			}
 
 		} else if v.Type == 3 { //会员生日
-			err:=l.SendMessageOfBirthDay(id, v.TypeData, message)
+			count,err=l.SendMessageOfBirthDay(id, v.TypeData, message)
 			if err!=nil{
 				common.Log.Errorln(err)
 				continue
 			}
 		}
 	}
-	return
+	return count
 }
 //根据会员生日
-func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string)error  {
+func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string) (int,error)  {
+	count:=0
 	list,err:=new(module.MemberInfo).GetAllMember()
 	if err!=nil{
-		return err
+		return count, err
 	}
 	subList := strings.Split(typeDate, ",")
 	for _, v := range list {
@@ -74,18 +76,25 @@ func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string)error  {
 					common.Log.Errorln(err)
 					continue
 				}
-				Push("myPusher","rmq_test",result)
+
+				err=Push("Pusher","",result)
+				if err!=nil{
+					common.Log.Errorln(err)
+					continue
+				}
+				count++
 				continue
 			}
 		}
 	}
-	return nil
+	return count,nil
 }
 //根据会员等级
-func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) error {
+func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) (int,error) {
+	count:=0
 	list, err := new(module.MemberCard).GetMessageOfGrade(typeDate)
 	if err != nil {
-		return err
+		return count,err
 	}
 	sendLog := new(MarshalJson)
 	sendLog.TemplateManageId = id
@@ -103,16 +112,23 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) error {
 			common.Log.Errorln(err)
 			continue
 		}
-		Push("myPusher", "rmq_test", result)
+
+		Push("Pusher", "", result)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		count++
 	}
-	return nil
+	return count,nil
 }
 
 //根据性别
-func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) error {
+func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) (int,error) {
+	count:=0
 	list, err := new(module.MemberInfo).GetMessageOfSex(typeDae)
 	if err != nil {
-		return err
+		return count,err
 	}
 	//发送短信
 	sendLog := new(MarshalJson)
@@ -131,17 +147,24 @@ func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) error {
 			common.Log.Errorln(err)
 			continue
 		}
-		Push("myPusher", "rmq_test", result)
+
+		err=Push("Pusher", "", result)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		count++
 	}
-	return nil
+	return count,nil
 }
 
 
 //发送所有人
-func(l* LogicService)SendMessageEveryOne(id int,msg string)error{
+func(l* LogicService)SendMessageEveryOne(id int,msg string) (int,error){
+	count :=0
 	list,err:=new(module.MemberInfo).GetAllMember()
 	if err!=nil{
-		return err
+		return count,err
 	}
 	sendLog := new(MarshalJson)
 	sendLog.TemplateManageId = id
@@ -159,19 +182,26 @@ func(l* LogicService)SendMessageEveryOne(id int,msg string)error{
 			common.Log.Errorln(err)
 			continue
 		}
-		Push("myPusher", "rmq_test", result)
+
+		err=Push("Pusher", "", result)
+		if err!=nil{
+			common.Log.Errorln(err)
+			continue
+		}
+		count++
 	}
 
-	return nil
+	return count,nil
 }
 
 
 //指定手机号码发送
-func(l*LogicService)SendMessageOfMobile(id int, typeDate,msg string)error{
+//返回值 1 为发送条数
+func(l*LogicService)SendMessageOfMobile(id int, typeDate,msg string)(int,error){
 	ob:=new(module.MemberInfo)
 	err:=ob.GetMessageOfPhone(typeDate)
 	if err!=nil{
-		return err
+		return 0,err
 	}
 	sendLog:=new(MarshalJson)
 	sendLog.TemplateManageId =id
@@ -180,15 +210,19 @@ func(l*LogicService)SendMessageOfMobile(id int, typeDate,msg string)error{
 	sendLog.Mobile = ob.Mobile
 	sendLog.MallId = new(module.Member).GetMallId(ob.MemberId)
 	if sendLog.MallId ==0{
-		return fmt.Errorf("会员%d不存在！！",ob.MemberId)
+		return 0,fmt.Errorf("会员%d不存在！！",ob.MemberId)
 	}
 	result,err:=sendLog.marshalJson(msg)
 	if err!=nil{
 		common.Log.Errorln(err)
-		return err
+		return 0,err
 	}
-	Push("myPusher","rmq_test",result)
-	return nil
+	err=Push("Pusher","",result)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return 0,err
+	}
+	return 1,nil
 }
 
 
@@ -206,8 +240,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 		if tsm.SendType == 2 { //即时发
 			fmt.Println("指定会员——即时发送")
 			//new(TemplateSmsType).SearchOfManageId(t.Id, t.TemplateId)
-			l.SendMessage(tsm.Id, tsm.TemplateId)
-
+			count=l.SendMessage(tsm.Id, tsm.TemplateId)
 		} else if tsm.SendType == 1 { //定时发
 			//启动定时器
 			str := "2006-01-02 15:04:05"
@@ -226,7 +259,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 				if tsm.SendTime.Unix() <= tim.Unix() {
 
 					fmt.Printf("开始发送时间为%s\r\n",time.Now().Format(str))
-					l.SendMessage(tsm.Id, tsm.TemplateId)
+					count=l.SendMessage(tsm.Id, tsm.TemplateId)
 					break ConditionUser
 				}
 			}
@@ -243,7 +276,11 @@ func (l *LogicService) AboutIdInfo(id int) {
 		}
 		if tsm.SendType == 2 { //即时发
 			fmt.Println("全员即时发送")
-			l.SendMessageEveryOne(tsm.Id, message)
+			count,err=l.SendMessageEveryOne(tsm.Id, message)
+			if err!=nil{
+				common.Log.Errorln(err)
+				return
+			}
 		} else if tsm.SendType == 1 { //定时发
 			//启动定时器
 			fmt.Println("全会员——定时发送")
@@ -261,7 +298,11 @@ func (l *LogicService) AboutIdInfo(id int) {
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
 					fmt.Printf("全员定时发送时间为%q\r\n",time.Now().Format(str))
-					l.SendMessageEveryOne(tsm.Id, message)
+					count,err=l.SendMessageEveryOne(tsm.Id, message)
+					if err!=nil{
+						common.Log.Errorln(err)
+						break EveryMark
+					}
 					break EveryMark
 				}
 			}
@@ -276,7 +317,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 		}
 		if tsm.SendType == 1 { //即时发
 			fmt.Println("指定电话号码即时发送")
-			err:=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
+			count,err=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 			if err!=nil{
 				common.Log.Errorln(err)
 				return
@@ -295,7 +336,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
 					fmt.Printf("指定电话号码定时发送 发送时间%q\r\n",time.Now().Format("2006-01-02 15:04:05"))
-					err:=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
+					count,err=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 					if err!=nil{
 						common.Log.Errorln(err)
 						break PhoneMar
