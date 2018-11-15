@@ -258,7 +258,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 				//判断是否到发送时间
 				if tsm.SendTime.Unix() <= tim.Unix() {
 
-					fmt.Printf("开始发送时间为%s\r\n",time.Now().Format(str))
+					fmt.Printf("开始发送时间为%v\r\n",time.Now().Format(str))
 					count=l.SendMessage(tsm.Id, tsm.TemplateId)
 					break ConditionUser
 				}
