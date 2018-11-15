@@ -1,5 +1,5 @@
 {
-  "Listen":":5010",
+  "listen":":5010",
   "runtimePath":"runtime",
   "maxWork":10,
   "maxQueueSize":200,
