@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"github.com/koding/multiconfig"
 	"github.com/streadway/amqp"
 	"os"
@@ -311,7 +312,7 @@ func CreateQueue(v Queue) (err error) {
 	}
 
 	if _, err = _ChannelPool[v.Channel].QueueDeclare(v.Name, v.Durable,
-		v.AutoDelete, v.Exclusive, v.NoWait, v.Args); err != nil {
+		v.AutoDelete, v.Exclusive, v.NoWait, nil); err != nil {
 		return err
 	} else {
 		if _, ok := _QueuePool[v.Name]; !ok {
@@ -445,7 +446,7 @@ func Init() (err error) {
 }
 
 func Receive() error {
-	if err := Pop("myPoper", callback); err != nil {
+	if err := Pop("Poper", callback); err != nil {
 		return err
 	}
 
@@ -500,6 +501,7 @@ func (m MSG) Ack(multiple bool) (err error) {
 
 //处理消息(顺序处理,如果需要多线程可以在回调函数中做手脚)
 func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, popupName string) {
+	fmt.Println("等待消息中......")
 	for d := range msgs {
 		var msg MSG = MSG{
 			Body:    d.Body,
