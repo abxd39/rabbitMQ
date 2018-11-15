@@ -80,7 +80,9 @@
             {"Key":"errServerQueue", "exchange_name":"errServerExchange", "no_wait":false}
         ],
         "args":{
-          "":""
+          "x-message-ttl":10,
+          "x-dead-letter-exchange":"dlxExchange",
+          "x-dead-letter-routing-key":"dlxQueue"
         }},
        {"name":"dlxQueue",
         "channel":"dlxChannel",
@@ -92,7 +94,9 @@
             {"Key":"dlxQueue", "exchange_name":"dlxExchange", "no_wait":false}
         ],
         "args":{
-          "":""
+          "x-message-ttl":10,
+          "x-dead-letter-exchange":"dlxExchange",
+          "x-dead-letter-routing-key":"dlxQueue"
         }}
     ],
     "pusher":[

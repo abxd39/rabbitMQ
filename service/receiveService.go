@@ -31,7 +31,6 @@ func otherCallback(d MSG) {
 }
 
 func  UnmarshalMQBody(body []byte) error {
-	//log.Println(string(body))
 	common.Log.Infoln("数据库条目 id 解码")
 	result := &struct {
 		Id string `json:"id"`
@@ -50,38 +49,3 @@ func  UnmarshalMQBody(body []byte) error {
 	return nil
 }
 
-//func main() {
-//	if err := rmq.Init("E:/WorkSpace/src/go-rabbitmq/example/rmq.json"); err != nil {
-//		fmt.Println(err)
-//		return
-//	}
-//
-//	if err := rmq.Pop("myPoper", callback); err != nil {
-//		fmt.Println(err)
-//		return
-//	}
-//
-//	if err := rmq.Pop("errPoper", errCallback); err != nil {
-//		fmt.Println(err)
-//		return
-//	}
-//
-//	if err := rmq.Pop("dlxPoper", dlxCallback); err != nil {
-//		fmt.Println(err)
-//		return
-//	}
-//	if err:=rmq.Pop("first",otherCallback);err!=nil{
-//		fmt.Println(err)
-//		return
-//	}
-//
-//	//time.Sleep(time.Duration(1000) * time.Second)
-//	//Wait for interrupt signal to gracefully shutdown the server with
-//	//a timeout of 30 seconds.
-//	quit := make(chan os.Signal)
-//	signal.Notify(quit, os.Interrupt)
-//	<-quit
-//	if err := rmq.Fini(); err != nil {
-//		fmt.Println(err)
-//	}
-//}
