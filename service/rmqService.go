@@ -112,22 +112,6 @@ var _Poper map[string]Popup = make(map[string]Popup)                            
 
 //读取配置文件
 func loadCfg() (err error) {
-	//var fp *os.File
-	//if fp, err = os.Open(path); err != nil {
-	//	return err
-	//}
-	//var data []byte
-	//if data, err = ioutil.ReadAll(fp); err != nil {
-	//	return err
-	//}
-	//if err = fp.Close(); err != nil {
-	//	return err
-	//}
-	//if err = json.Unmarshal(data, _Cfg); err != nil {
-	//	return err
-	//}
-	//fmt.Printf("%q\n",_Cfg)
-	//
 	if err = _Cfg.load(); err != nil {
 		return err
 	}
@@ -305,10 +289,6 @@ func CreateQueue(v Queue) (err error) {
 		t := int32(v.Args["x-message-ttl"].(float64))
 		delete(v.Args, "x-message-ttl")
 		v.Args["x-message-ttl"] = t
-	}
-
-	if !v.NoWait{
-		v.Args= nil
 	}
 
 	if _, err = _ChannelPool[v.Channel].QueueDeclare(v.Name, v.Durable,
@@ -511,7 +491,7 @@ func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, po
 		}
 
 		callback(msg)
-		msg.Ack(false)
+		d.Ack(false)
 		time.Sleep(time.Second)
 	}
 }

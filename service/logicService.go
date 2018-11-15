@@ -239,7 +239,6 @@ func (l *LogicService) AboutIdInfo(id int) {
 	if tsm.AcceptUserType == 1 { //指定会员
 		if tsm.SendType == 2 { //即时发
 			fmt.Println("指定会员——即时发送")
-			//new(TemplateSmsType).SearchOfManageId(t.Id, t.TemplateId)
 			count=l.SendMessage(tsm.Id, tsm.TemplateId)
 		} else if tsm.SendType == 1 { //定时发
 			//启动定时器
@@ -315,14 +314,14 @@ func (l *LogicService) AboutIdInfo(id int) {
 			common.Log.Infoln(err)
 			return
 		}
-		if tsm.SendType == 1 { //即时发
+		if tsm.SendType == 2 { //即时发
 			fmt.Println("指定电话号码即时发送")
 			count,err=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 			if err!=nil{
 				common.Log.Errorln(err)
 				return
 			}
-		} else if tsm.SendType == 2 { //定时发
+		} else if tsm.SendType == 1 { //定时发
 		PhoneMar:
 			for {
 				time.Sleep(5 * time.Second)

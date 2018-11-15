@@ -44,7 +44,7 @@ type TemplateSmsType struct {
 func (t*TemplateSmsType)GetSmsTypeOfId(id int)([]TemplateSmsType,error){
 	engine := common.DB
 	list := make([]TemplateSmsType, 0)
-	err := engine.Where("template_manage_id=?", id).Find(&list)
+	err := engine.Where("id=?", id).Find(&list)
 	if err != nil {
 		return nil,err
 	}
