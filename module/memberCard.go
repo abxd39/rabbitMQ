@@ -77,7 +77,7 @@ func (m *mobile) TableName() string {
 func (m*MemberCard) GetMessageOfGrade(grade string)([]mobile,error){
 	engine := common.DB
 
-	query := engine.Join("left", "member_info", "card_no==id")
+	query := engine.Join("left", "member_info", "card_no=id")
 	query = query.In("level", grade)
 
 	list := make([]mobile, 0)
