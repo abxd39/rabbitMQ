@@ -21,7 +21,7 @@ type TemplateSms struct {
 
 func (t* TemplateSms) GetText(TemplateId int) (string,error){
 	engine :=common.DB
-	has,err:=engine.Where("template_type=?",TemplateId).Get(t)
+	has,err:=engine.Where("id=?",TemplateId).Get(t)
 	if err!=nil{
 		log.Printf("短息模板查询失败=%s",err.Error())
 		return "",err
