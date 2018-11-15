@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"runtime"
 )
 
 type Logger struct {
@@ -27,7 +26,7 @@ func NewLogger(logfile string, tracelevel int) (*Logger, error) {
 		logger.trace = log.New(w, "[T] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		logger.info = log.New(w, "[I] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		logger.warn = log.New(w, "[W] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lmicroseconds)
+		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 		return logger, err
 	}
 }
@@ -85,12 +84,12 @@ func (l *Logger) getWriter() (io.Writer, error) {
 
 func (l *Logger) getTraceInfo(level int) string {
 	t := ""
-	for i := 0; i < level; i++ {
-		_, file, line, ok := runtime.Caller(3 + i)
-		if !ok {
-			break
-		}
-		t += fmt.Sprintln("in", file, line)
-	}
+	//for i := 0; i < level; i++ {
+	//	_, file, line, ok := runtime.Caller(3 + i)
+	//	if !ok {
+	//		break
+	//	}
+	//	//t += fmt.Sprintln("in", file, line)
+	//}
 	return t
 }
