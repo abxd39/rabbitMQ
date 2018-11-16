@@ -18,11 +18,11 @@ type LoggerConfig struct {
 }
 
 type ServerConfig struct {
-	Listen      string `default:":5000"`
-	RuntimePath string `default:"runtime"`
+	Listen       string `default:":5000"`
+	RuntimePath  string `default:"runtime"`
 	MaxWork      int
 	MaxQueueSize int
-	Db          struct {
+	Db           struct {
 		Host        string
 		Port        string `default:"3306"`
 		Name        string
@@ -58,10 +58,11 @@ type ServerConfig struct {
 	GateWay struct {
 		Token string `default:"test"`
 		Host  string
-		Test  bool   `default:"false"`
+		Test  bool `default:"false"`
 	}
 	VisitInterval string
-	IsDev         bool `default:"false"`
+	IsDev         bool   `default:"false"`
+	Url           string `json:"url"`
 }
 
 func (c *FlagConfig) load() error {

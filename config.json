@@ -34,6 +34,5 @@
   "gate_way":{
     "host":"127.0.0.1"
   },
-  "token":"test",
-  "aPIHost":"https://marketing-api.dev-dbees.snsshop.net/"
+  "url":"http://mall-api.ibc.snsshop.net/"
 }
