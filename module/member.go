@@ -29,20 +29,30 @@ type Member struct {
 	Created           time.Time `xorm:"not null comment('创建时间') DATETIME"`
 }
 
-func (m* Member) TableName() string {
+func (m *Member) TableName() string {
 	return "member"
 }
 
-func (m*Member) GetMallId(id int)int{
-	engine:=common.DB
-	has,err:=engine.Where("id=?",id).Get(m)
-	if err!=nil{
+func (m *Member) GetMallId(id int) int {
+	engine := common.DB
+	has, err := engine.Where("id=?", id).Get(m)
+	if err != nil {
 		common.Log.Errorln(err)
 		return 0
 	}
-	if !has{
-		common.Log.Errorf("会员%d不存在！！\r\n",id)
+	if !has {
+		common.Log.Errorf("会员%d不存在！！\r\n", id)
 		return 0
 	}
 	return m.MallId
+}
+
+func (m *Member) GetMemberId(idList []int) ([]int, error) {
+	engine := common.DB
+	list := make([]int, 0)
+	err := engine.Table("member").Cols("id").In("member_card_id", idList).Find(&list)
+	if err != nil {
+		return nil, err
+	}
+	return list, nil
 }

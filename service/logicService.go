@@ -23,21 +23,18 @@ func (l *LogicService) SendMessage(id, templateId int)int {
 		return count
 	}
 	for _, v := range list {
-		fmt.Println("指定发送给谁", v.Type)
 		if v.Type == 1 { //姓别
+			fmt.Println("根据会员性别发送")
 			count,err = l.SendMessageForSex(id, v.TypeData, message)
 			if err != nil {
 				common.Log.Errorln(err)
 				continue
 			}
 		} else if v.Type == 2 { //会员等级
-			count,err=l.SendMessageForGrade(id, v.TypeData, message)
-			if err!=nil{
-				common.Log.Errorln(err)
-				continue
-			}
-
+			fmt.Println("根据会员等级发送")
+			count=l.SendMessageForGrade(id, v.TypeData, message)
 		} else if v.Type == 3 { //会员生日
+			fmt.Println("根据会员生日发送")
 			count,err=l.SendMessageOfBirthDay(id, v.TypeData, message)
 			if err!=nil{
 				common.Log.Errorln(err)
@@ -90,11 +87,33 @@ func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string) (int,erro
 	return count,nil
 }
 //根据会员等级
-func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) (int,error) {
+func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) (int) {
 	count:=0
-	list, err := new(module.MemberCard).GetMessageOfGrade(typeDate)
+
+	listGradId,err:=new(module.MemberCard).GetMessageOfGrade(typeDate)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return count
+	}
+	if len(listGradId)==0{
+		err =fmt.Errorf("会员等级为【%v】的会员不存在!!",typeDate)
+		common.Log.Errorln(err)
+		return count
+	}
+	listMemberId,err:= new(module.Member).GetMemberId(listGradId)
+	if err!=nil{
+		common.Log.Errorln(err)
+		return count
+	}
+	if len(listMemberId)==0{
+		err= fmt.Errorf("member 表中没有 MemberCarId=%v的记录",listGradId)
+		common.Log.Errorln(err)
+		return count
+	}
+	list, err := new(module.MemberInfo).GetMemberIdList(listMemberId)
 	if err != nil {
-		return count,err
+		common.Log.Errorln(err)
+		return count
 	}
 	sendLog := new(MarshalJson)
 	sendLog.TemplateManageId = id
@@ -120,7 +139,7 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) (int,er
 		}
 		count++
 	}
-	return count,nil
+	return count
 }
 
 //根据性别

@@ -24,6 +24,15 @@ func (m *MemberInfo) TableName() string {
 	return "member_info"
 }
 
+func(m* MemberInfo) GetMemberIdList(idList []int)([]MemberInfo,error){
+	common.Log.Infof("会员id%v\r\n",idList)
+	list:=make([]MemberInfo,0)
+	err:=common.DB.Cols("member_id","corp_id","mobile").In("member_id",idList).Find(&list)
+	if err!=nil{
+		return nil, err
+	}
+	return list, nil
+}
 
 func(m*MemberInfo)GetMessageOfSex(sex string)([]MemberInfo,error){
 	common.Log.Infof("性别为%q的会员\r\n",sex)

@@ -29,5 +29,5 @@ func (t* TemplateSms) GetText(TemplateId int) (string,error){
 	if !has{
 		return "",fmt.Errorf("短息模板id为=%d不存在",TemplateId)
 	}
-	return t.Content,nil
+	return t.TemplateId,nil
 }

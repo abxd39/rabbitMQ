@@ -26,64 +26,13 @@ func (m *MemberCard) TableName() string {
 	return "member_card"
 }
 
-type mobile struct {
-	Mobile   string `json:"mobile"`
-	Level    int    `json:"level"`
-	CardNo   string `json:"card_no"`
-	MemberId int    `json:"member_id"`
-	CorpId   int    `json:"corp_id"`
-}
 
-func (m *mobile) TableName() string {
-	return "member_card"
-}
-
-//根据会员等级发送
-//func (m *MemberCard) SendMessageForGrade(manageId int, grade, message string) error {
-//	common.Log.Infoln("根据会员等级把消息压入mq队列")
-//	engine := common.DB
-//
-//	query := engine.Join("left", "member_info", "card_no==id")
-//	query = query.In("level", grade)
-//
-//	list := make([]mobile, 0)
-//	err := query.Find(&list)
-//	if err != nil {
-//		common.Log.Infoln(err)
-//		log.Print(err.Error())
-//		return err
-//	}
-//
-//	for _, v := range list {
-//		sendLog := new(TemplateSmsLog)
-//		sendLog.TemplateManageId = manageId
-//		sendLog.MemberId = v.MemberId
-//		sendLog.CorpId = v.CorpId
-//		sendLog.Mobile = v.Mobile
-//		sendLog.MallId = new(Member).GetMallId(v.MemberId)
-//		if sendLog.MallId == 0 {
-//			continue
-//		}
-//		result, err := sendLog.marshalJson(message)
-//		if err != nil {
-//			common.Log.Errorln(err)
-//			continue
-//		}
-//		Push("myPusher", "rmq_test", result)
-//	}
-//	return nil
-//}
-
-func (m*MemberCard) GetMessageOfGrade(grade string)([]mobile,error){
+func (m*MemberCard) GetMessageOfGrade(grade string)([]int,error){
 	engine := common.DB
-
-	query := engine.Join("left", "member_info", "card_no=id")
-	query = query.In("level", grade)
-
-	list := make([]mobile, 0)
-	err := query.Find(&list)
+	idList:=make([]int,0)
+	err:=engine.Table("member_card").Cols("id").In("level", grade).Find(&idList)
 	if err != nil {
 		return nil ,err
 	}
-	return list, nil
+	return idList, nil
 }
