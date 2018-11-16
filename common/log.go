@@ -23,10 +23,10 @@ func NewLogger(logfile string, tracelevel int) (*Logger, error) {
 	if w, err := logger.getWriter(); err != nil {
 		return logger, err
 	} else {
-		logger.trace = log.New(w, "[T] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-		logger.info = log.New(w, "[I] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-		logger.warn = log.New(w, "[W] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
-		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+		logger.trace = log.New(w, "[T] ", log.Ldate|log.Ltime|log.Lshortfile)
+		logger.info = log.New(w, "[I] ", log.Ldate|log.Ltime|log.Lshortfile)
+		logger.warn = log.New(w, "[W] ", log.Ldate|log.Ltime|log.Lshortfile)
+		logger.error = log.New(w, "[E] ", log.Ldate|log.Ltime|log.Lshortfile)
 		return logger, err
 	}
 }
