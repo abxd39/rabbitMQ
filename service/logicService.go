@@ -253,6 +253,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 	err := tsm.GetManageOfId(id)
 	if err != nil {
 		common.Log.Errorln(err)
+		if err:=tsm.UpdateSendStatus(tsm.Id);err!=nil{
+			common.Log.Errorln(err)
+		}
 		return
 	}
 	if tsm.AcceptUserType == 1 { //指定会员
@@ -290,6 +293,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 		message, err := new(module.TemplateSms).GetText(tsm.TemplateId)
 		if err != nil {
 			common.Log.Infoln(err)
+			if err:=tsm.UpdateSendStatus(tsm.Id);err!=nil{
+				common.Log.Errorln(err)
+			}
 			return
 		}
 		if tsm.SendType == 2 { //即时发
@@ -297,6 +303,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 			count,err=l.SendMessageEveryOne(tsm.Id, message)
 			if err!=nil{
 				common.Log.Errorln(err)
+				if err:=tsm.UpdateSendStatus(tsm.Id);err!=nil{
+					common.Log.Errorln(err)
+				}
 				return
 			}
 		} else if tsm.SendType == 1 { //定时发
@@ -331,6 +340,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 		message, err := new(module.TemplateSms).GetText(tsm.TemplateId)
 		if err != nil {
 			common.Log.Infoln(err)
+			if err:=tsm.UpdateSendStatus(tsm.Id);err!=nil{
+				common.Log.Errorln(err)
+			}
 			return
 		}
 		if tsm.SendType == 2 { //即时发
@@ -338,6 +350,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 			count,err=l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 			if err!=nil{
 				common.Log.Errorln(err)
+				if err:=tsm.UpdateSendStatus(tsm.Id);err!=nil{
+					common.Log.Errorln(err)
+				}
 				return
 			}
 		} else if tsm.SendType == 1 { //定时发
@@ -366,7 +381,7 @@ func (l *LogicService) AboutIdInfo(id int) {
 		}
 	}
 	//更新状态
-	err=tsm.UpdateStatus(tsm.Id,count)
+	err=tsm.UpdateCount(tsm.Id,count)
 	if err!=nil{
 		common.Log.Errorln(err)
 	}
