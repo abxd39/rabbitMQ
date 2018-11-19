@@ -82,8 +82,6 @@ func (m *MarshalJson) UnmarshalJson(body []byte) {
 		common.Log.Infof("发送的内容为空")
 		return
 	}
-
 	pool.Add(m)
-
 	return
 }

@@ -11,7 +11,7 @@ func callback(d MSG) {
 	common.Log.Infoln("yf_manage_message  consumer")
 	fmt.Printf("接收到的信息为%q",string(d.Body))
 	//发送短息
-	new(MarshalJson).UnmarshalJson(d.Body)
+	go new(MarshalJson).UnmarshalJson(d.Body)
 }
 
 func errCallback(d MSG) {

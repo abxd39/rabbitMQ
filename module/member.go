@@ -14,19 +14,20 @@ type Member struct {
 	TotalFee          int64     `xorm:"not null default 0 comment('消费金额（单位为分）') BIGINT(20)"`
 	LevelFee          int64     `xorm:"not null default 0 comment('当前等级累计消费') BIGINT(20)"`
 	TotalPoints       int64     `xorm:"not null default 0 comment('会员总积分') BIGINT(20)"`
-	UsablePoints      int64     `xorm:"not null default 0 comment('可用积分') BIGINT(20)"`
-	FrozenPoints      int64     `xorm:"not null default 0 comment('冻结积分') BIGINT(20)"`
 	PayTimes          int       `xorm:"not null default 0 comment('消费次数') INT(11)"`
 	Status            int       `xorm:"not null default 1 comment('状态（0：冻结 ,1：正常）') TINYINT(4)"`
 	YAmount           int       `xorm:"not null default 0 comment('截至昨日的累计消费（分）') INT(11)"`
 	YCount            int       `xorm:"not null default 0 comment('截至到昨日的累计消费次数') INT(11)"`
-	YStatisDate       time.Time `xorm:"not null comment('统计的时间（避免重复统计）') DATETIME"`
+	YStatisDate       time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('统计的时间（避免重复统计）') DATETIME"`
 	IsNew             int       `xorm:"not null default 1 comment('是否为新会员（0：否，1：是）') TINYINT(4)"`
-	FirstConsumeDate  time.Time `xorm:"not null comment('首次消费时间') DATETIME"`
-	ToOldDate         time.Time `xorm:"not null comment('转为老会员时间') DATETIME"`
-	LastVisitTime     time.Time `xorm:"not null comment('最后访问时间') DATETIME"`
-	LastDownlevelTime time.Time `xorm:"not null comment('上次降级时间') DATETIME"`
-	Created           time.Time `xorm:"not null comment('创建时间') DATETIME"`
+	FirstConsumeDate  time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('首次消费时间') DATETIME"`
+	ToOldDate         time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('转为老会员时间') DATETIME"`
+	LastVisitTime     time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('最后访问时间') DATETIME"`
+	LastDownlevelTime time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('上次降级时间') DATETIME"`
+	Created           time.Time `xorm:"not null default '0000-00-00 00:00:00' comment('创建时间') DATETIME"`
+	UpDownType        int       `xorm:"not null default 0 comment('升降级类型：0系统升降级，1手动调整') TINYINT(1)"`
+	HandLevel         int       `xorm:"not null default 0 comment('手动调整会员卡等级') TINYINT(4)"`
+	ModifyReason      string    `xorm:"not null default '' comment('修改原因') VARCHAR(225)"`
 }
 
 func (m *Member) TableName() string {

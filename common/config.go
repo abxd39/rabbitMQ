@@ -20,8 +20,8 @@ type LoggerConfig struct {
 type ServerConfig struct {
 	Listen       string `default:":5000"`
 	RuntimePath  string `default:"runtime"`
-	MaxWork      int
-	MaxQueueSize int
+	MaxWork      int    `json:"max_work"`
+	MaxQueueSize int    `json:"max_queue_size"`
 	Db           struct {
 		Host        string
 		Port        string `default:"3306"`

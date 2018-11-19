@@ -17,6 +17,9 @@ func NewPool(maxQueueSize int) *Pool {
 }
 
 func (p *Pool) Add(w Worker) {
+	//if _, isClose := <-p.work;!isClose{
+	//	return
+	//}
 	p.wg.Add(1)
 	p.work <- w
 }
