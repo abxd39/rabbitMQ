@@ -68,7 +68,7 @@ func (m *MarshalJson) Run() error {
 
 
 func (m *MarshalJson) UnmarshalJson(body []byte) {
-	common.Log.Traceln("添加到工作池")
+	//common.Log.Traceln("添加到工作池")
 	err := json.Unmarshal(body, m)
 	if err != nil {
 		common.Log.Errorln(err)
@@ -84,6 +84,6 @@ func (m *MarshalJson) UnmarshalJson(body []byte) {
 		return
 	}
 	pool.Add(m)
-	common.Log.Infoln("添加到工作池成功！！")
+	//common.Log.Infoln("添加到工作池成功！！")
 	return
 }

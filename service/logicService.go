@@ -234,6 +234,7 @@ func(l*LogicService)SendMessageOfMobile(id int, typeDate,msg string)(int,error){
 }
 
 
+//入口函数
 func (l *LogicService) AboutIdInfo(id int) {
 	//再此处理逻辑业务
 	//判断怎么发送 发送那些人
