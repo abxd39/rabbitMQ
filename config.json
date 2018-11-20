@@ -10,7 +10,7 @@
     "pass_word":"typhoon",
     "max_open_conns":100,
     "max_idle_conns":10,
-    "show_sQL":false,
+    "show_sQL":true,
     "slave_config":{
       "user":"admin",
       "pass_word":"admin"

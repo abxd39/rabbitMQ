@@ -24,9 +24,18 @@ type TemplateSmsManage struct {
 	Delete         int       `xorm:"default 0 comment('0-正常；1-删除') TINYINT(1)"`
 }
 
+//获取定时任务
+func(t*TemplateSmsManage)GetManageCron()([]TemplateSmsManage,error){
+	list:=make([]TemplateSmsManage,0)
+	err:=common.DB.Where("send_type=1").Where("send_status=1").Find(&list)
+	if err!=nil{
+		return nil,err
+	}
+	return list,nil
+}
 
 func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
-	common.Log.Infoln("从mq 中获取消息id AboutIdInfo")
+	common.Log.Infoln("从mq 中获取消息id")
 	engine := common.DB
 	has, err := engine.Where("id=?", id).Get(t)
 	if err != nil {
@@ -47,8 +56,9 @@ func (t*TemplateSmsManage) UpdateCount(id,count int)error{
 	if count ==0{
 		return t.UpdateSendStatus(id)
 	}
-	has,err:=engine.Cols("send_count","updated").Where("id=?",id).Update(&TemplateSmsManage{
+	has,err:=engine.Cols("send_count","updated","send_status").Where("id=?",id).Update(&TemplateSmsManage{
 		SendCount:count,
+		SendStatus:2,
 		Updated:time.Now(),
 	})
 	if err!=nil{
