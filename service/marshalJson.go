@@ -14,6 +14,7 @@ var pool *worker.Pool
 func InitPool(){
 	pool = worker.NewPool(common.Config.MaxQueueSize)
 	pool.Run(common.Config.MaxWork)
+	common.Log.Infof("goroutine的个数为%v,最大任务数为%v\r\n",common.Config.MaxWork,common.Config.MaxQueueSize)
 }
 
 func ClosePool(){
@@ -67,7 +68,7 @@ func (m *MarshalJson) Run() error {
 
 
 func (m *MarshalJson) UnmarshalJson(body []byte) {
-	common.Log.Traceln("开始发送短息")
+	common.Log.Traceln("添加到工作池")
 	err := json.Unmarshal(body, m)
 	if err != nil {
 		common.Log.Errorln(err)
@@ -83,5 +84,6 @@ func (m *MarshalJson) UnmarshalJson(body []byte) {
 		return
 	}
 	pool.Add(m)
+	common.Log.Infoln("添加到工作池成功！！")
 	return
 }

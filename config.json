@@ -1,19 +1,19 @@
 {
   "listen":":5010",
-  "runtimePath":"runtime",
-  "maxWork":10,
-  "maxQueueSize":200,
+  "runtime_path":"runtime",
+  "max_work":10,
+  "max_queue_size":200,
   "db": {
     "host":"10.20.20.82",
     "name":"typhoon_ibc",
     "user":"root",
-    "password":"typhoon",
-    "maxOpenConns":100,
-    "maxIdleConns":10,
-    "showSQL":true,
+    "pass_word":"typhoon",
+    "max_open_conns":100,
+    "max_idle_conns":10,
+    "show_sQL":true,
     "slave_config":{
       "user":"admin",
-      "password":"admin"
+      "pass_word":"admin"
     },
     "slaves":[
       {
@@ -25,11 +25,11 @@
   },
   "redis":{
     "address":"127.0.0.1",
-    "password":"123456"
+    "pass_word":"123456"
   },
   "log": {
     "traceLevel": 1,
-    "logFile":"th-platform-gateway.log"
+    "log_file":"th-platform-gateway.log"
   },
   "gate_way":{
     "host":"127.0.0.1"

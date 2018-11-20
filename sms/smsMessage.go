@@ -15,8 +15,6 @@ import (
 type SMSMessage struct{}
 
 func (s *SMSMessage) SendMobileMessage(phone, message string) error {
-	fmt.Printf("%v 发送内容%v 成功\r\n",phone,message)
-	return nil
 	params := make(map[string]interface{})
 	params["mobile"] = phone
 	params["msg"] = message
@@ -57,6 +55,6 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	if rsp.Code !=-1 {
 		return fmt.Errorf(rsp.ErrMsg)
 	}
-	fmt.Println("短息发送成功^~^")
+	common.Log.Infoln("短息发送成功^~^")
 	return nil
 }
