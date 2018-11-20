@@ -10,15 +10,11 @@ var CPath *goconfig.ConfigFile
 
 func init() {
 	var err error
-	CPath, err = goconfig.LoadConfigFile("E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/configPath.ini")
+	CPath, err = goconfig.LoadConfigFile("./configPath.ini")
 	if err != nil {
 		panic("load config err is " + err.Error())
 	}
 }
-
-//type FlagConfig struct {
-//	ConfigFile string `default:"config.json"`
-//}
 
 type LoggerConfig struct {
 	Enabled    bool `default:"true"`
