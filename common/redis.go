@@ -14,7 +14,7 @@ const (
 func OpenRedis() error {
 	RedisPool = redis.NewClient(&redis.Options{
 		Addr:     Config.Redis.Address,
-		Password: Config.Redis.Password,
+		Password: Config.Redis.PassWord,
 		DB:       Config.Redis.Database,
 	})
 

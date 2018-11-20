@@ -17,9 +17,9 @@ func init() {
 }
 
 type LoggerConfig struct {
-	Enabled    bool `default:"true"`
-	LogFile    string
-	TraceLevel int `default:"3"`
+	Enabled    bool `json:"enabled "default:"true"`
+	LogFile    string `json:"log_file"`
+	TraceLevel int `json:"trace_level" default:"3"`
 }
 
 type ServerConfig struct {
@@ -28,36 +28,36 @@ type ServerConfig struct {
 	MaxWork      int    `json:"max_work"`
 	MaxQueueSize int    `json:"max_queue_size"`
 	Db           struct {
-		Host        string
-		Port        string `default:"3306"`
-		Name        string
-		User        string
+		Host        string	`json:"host"`
+		Port        string `json:"port" default:"3306"`
+		Name        string	`json:"name"`
+		User        string`json:"user"`
 		PassWord    string `json:"pass_word"`
 		SlaveConfig struct {
-			User     string
-			PassWord string
+			User     string `json:"user"`
+			PassWord string `json:"pass_word"`
 		}
 		Slaves []struct {
-			Host string
-			Port string
-			Name string
+			Host string `json:"host"`
+			Port string `json:"port"`
+			Name string `json:"name"`
 		}
-		ShowSQL      bool `default:"false"`
-		MaxOpenConns int  `default:"100"`
+		ShowSQL      bool `json:"show_sql" default:"false"`
+		MaxOpenConns int  `json:"max_open_conns" default:"100"`
 	}
 	Redis struct {
-		Address  string
-		Database int `default:"0"`
-		Password string
+		Address  string `json:"address"`
+		Database int `json:"database" default:"0"`
+		PassWord string `json:"pass_word"`
 	}
 	Log struct {
-		LogFile    string `default:""`
-		TraceLevel int    `default:"3"`
+		LogFile    string `json:"log_file"`
+		TraceLevel int    `json:"trace_level" default:"3"`
 		Logger     struct {
-			Trace LoggerConfig
-			Info  LoggerConfig
-			Warn  LoggerConfig
-			Error LoggerConfig
+			Trace LoggerConfig `json:"trace"`
+			Info  LoggerConfig `json:"info"`
+			Warn  LoggerConfig `json:"warn"`
+			Error LoggerConfig `json:"error"`
 		}
 	}
 	GateWay struct {

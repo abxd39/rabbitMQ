@@ -53,7 +53,7 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	if rsp.Code !=-1 {
-		return fmt.Errorf(rsp.ErrMsg)
+		return fmt.Errorf("发送短息返回的错误信息为【%v】\r\n",rsp.ErrMsg)
 	}
 	common.Log.Infoln("短息发送成功^~^")
 	return nil
