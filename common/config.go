@@ -32,7 +32,7 @@ type ServerConfig struct {
 		Port        string `default:"3306"`
 		Name        string
 		User        string
-		PassWord    string
+		PassWord    string `json:"pass_word"`
 		SlaveConfig struct {
 			User     string
 			PassWord string

@@ -4,11 +4,14 @@ import (
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
+	"sctek.com/typhoon/th-open-api/common"
 )
 
 func OpenDb() error {
 	var err error
-	DB, err = xorm.NewEngine("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", Config.Db.User, Config.Db.PassWord, Config.Db.Host, Config.Db.Port, Config.Db.Name))
+	str:= fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", Config.Db.User, Config.Db.PassWord, Config.Db.Host, Config.Db.Port, Config.Db.Name)
+	common.Log.Errorln("数据库链接",str)
+	DB, err = xorm.NewEngine("mysql",str)
 	if err!=nil{
 		panic(err)
 	}
