@@ -2,6 +2,8 @@ package module
 
 import (
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -30,7 +32,16 @@ func (m *MemberCard) TableName() string {
 func (m*MemberCard) GetMessageOfGrade(grade string)([]int,error){
 	engine := common.DB
 	idList:=make([]int,0)
-	err:=engine.Table("member_card").Cols("id").In("level", grade).Find(&idList)
+	subList := strings.Split(grade, ",")
+	intList:=make([]int,0)
+	for _,v:=range subList{
+		number,err:=strconv.Atoi(v)
+		if err!=nil{
+			continue
+		}
+		intList =append(intList,number)
+	}
+	err:=engine.Table("member_card").Cols("id").In("level", intList).Find(&idList)
 	if err != nil {
 		return nil ,err
 	}

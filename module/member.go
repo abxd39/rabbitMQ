@@ -2,6 +2,8 @@ package module
 
 import (
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -48,9 +50,18 @@ func (m *Member) GetMallId(id int) int {
 	return m.MallId
 }
 
-func (m *Member) GetMemberId(idList []int) ([]int, error) {
+func (m *Member) GetMemberId(grade string) ([]int, error) {
 	engine := common.DB
 	list := make([]int, 0)
+	idList:=make([]int,0)
+	subList := strings.Split(grade, ",")
+	for _,v:=range subList{
+		number,err:=strconv.Atoi(v)
+		if err!=nil{
+			continue
+		}
+		idList =append(idList,number)
+	}
 	err := engine.Table("member").Cols("id").In("member_card_id", idList).Find(&list)
 	if err != nil {
 		return nil, err
