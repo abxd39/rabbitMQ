@@ -6,6 +6,7 @@ import (
 	"github.com/koding/multiconfig"
 	"github.com/streadway/amqp"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"time"
 )
 
 
@@ -501,11 +502,11 @@ func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, po
 		}
 
 		callback(msg)
-		err := d.Ack(true)
+		err := d.Ack(false)
 		if err != nil {
 			common.Log.Errorln(err)
 		}
-		//time.Sleep(time.Second)
+		time.Sleep(time.Nanosecond)
 	}
 }
 
