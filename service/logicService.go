@@ -89,24 +89,13 @@ func (l*LogicService)SendMessageOfBirthDay(id int,typeDate,msg string) (int,erro
 //根据会员等级
 func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) (int) {
 	count:=0
-
-	listGradId,err:=new(module.MemberCard).GetMessageOfGrade(typeDate)
-	if err!=nil{
-		common.Log.Errorln(err)
-		return count
-	}
-	if len(listGradId)==0{
-		err =fmt.Errorf("会员等级为【%v】的会员不存在!!",typeDate)
-		common.Log.Errorln(err)
-		return count
-	}
-	listMemberId,err:= new(module.Member).GetMemberId(listGradId)
+	listMemberId,err:= new(module.Member).GetMemberId(typeDate)
 	if err!=nil{
 		common.Log.Errorln(err)
 		return count
 	}
 	if len(listMemberId)==0{
-		err= fmt.Errorf("member 表中没有 MemberCarId=%v的记录",listGradId)
+		err= fmt.Errorf("member 表中没有 MemberCarId=%v的记录",typeDate)
 		common.Log.Errorln(err)
 		return count
 	}
