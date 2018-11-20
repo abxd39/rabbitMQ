@@ -41,7 +41,7 @@ func main() {
 	cron.Start()
 	defer cron.Stop()
 	//5秒执行一次
-	cron.AddFunc("*/5 * * * * *", service.CronSelect)
+	cron.AddFunc("*/60 * * * * *", service.CronSelect)
 	//mq 初始化
 	common.CheckErr(service.Init())
 	//工作池初始化

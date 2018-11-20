@@ -56,8 +56,9 @@ func (t*TemplateSmsManage) UpdateCount(id,count int)error{
 	if count ==0{
 		return t.UpdateSendStatus(id)
 	}
-	has,err:=engine.Cols("send_count","updated").Where("id=?",id).Update(&TemplateSmsManage{
+	has,err:=engine.Cols("send_count","updated","send_status").Where("id=?",id).Update(&TemplateSmsManage{
 		SendCount:count,
+		SendStatus:2,
 		Updated:time.Now(),
 	})
 	if err!=nil{
