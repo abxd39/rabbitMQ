@@ -13,6 +13,12 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "/S6uDa9Hh34HDKKhhOpsds2OY2o=",
+			"path": "github.com/Unknwon/goconfig",
+			"revision": "56bd8ab186196b5203e3b8e17057a04a65153003",
+			"revisionTime": "2018-11-05T21:41:10Z"
+		},
+		{
 			"checksumSHA1": "YI+jF1ppamEFWp2dcJ0tGnYuC5A=",
 			"path": "github.com/cockroachdb/apd",
 			"revision": "7cf2edc5d0a7a764b55dfdfb3b77849e87730084",

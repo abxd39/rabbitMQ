@@ -2,18 +2,12 @@ package service
 
 import (
 	"errors"
-	"flag"
 	"fmt"
 	"github.com/koding/multiconfig"
 	"github.com/streadway/amqp"
-	"os"
 	"sctek.com/typhoon/th-platform-gateway/common"
 )
 
-//E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/rmq.json
-type MqFlagConfig struct {
-	ConfigFile string `json:"rmq.json"`
-}
 
 //连接结构
 type Connect struct {
@@ -118,30 +112,13 @@ func loadCfg() (err error) {
 	return nil
 }
 
-func (c *MqFlagConfig) load() error {
-	t := &multiconfig.TagLoader{}
-	f := &multiconfig.FlagLoader{}
-	m := multiconfig.MultiLoader(t, f)
-	if err := m.Load(c); err == flag.ErrHelp {
-		os.Exit(0)
-	} else if err != nil {
-		return err
-	}
-	return nil
-}
 
 func (c *mqCfg) load() error {
-	f := &MqFlagConfig{}
-	err := f.load()
-	if err == flag.ErrHelp {
-		os.Exit(0)
-	} else if err != nil {
-		return err
-	}
+
 	t := &multiconfig.TagLoader{}
-	j := &multiconfig.JSONLoader{Path: f.ConfigFile}
+	j := &multiconfig.JSONLoader{Path: common.CPath.MustValue("rmqPath","path","rmq.json")}
 	m := multiconfig.MultiLoader(t, j)
-	err = m.Load(c)
+	err := m.Load(c)
 	return err
 }
 

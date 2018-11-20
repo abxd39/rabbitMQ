@@ -1,15 +1,24 @@
 package common
 
 import (
-	"flag"
-	"os"
-
+	"github.com/Unknwon/goconfig"
 	"github.com/koding/multiconfig"
 )
 
-type FlagConfig struct {
-	ConfigFile string `default:"config.json"`
+
+var CPath *goconfig.ConfigFile
+
+func init() {
+	var err error
+	CPath, err = goconfig.LoadConfigFile("E:/WorkSpace/src/sctek.com/typhoon/th-platform-gateway/configPath.ini")
+	if err != nil {
+		panic("load config err is " + err.Error())
+	}
 }
+
+//type FlagConfig struct {
+//	ConfigFile string `default:"config.json"`
+//}
 
 type LoggerConfig struct {
 	Enabled    bool `default:"true"`
@@ -65,29 +74,11 @@ type ServerConfig struct {
 	Url           string `json:"url"`
 }
 
-func (c *FlagConfig) load() error {
-	t := &multiconfig.TagLoader{}
-	f := &multiconfig.FlagLoader{}
-	m := multiconfig.MultiLoader(t, f)
-	if err := m.Load(c); err == flag.ErrHelp {
-		os.Exit(0)
-	} else if err != nil {
-		return err
-	}
-	return nil
-}
 
 func (c *ServerConfig) load() error {
-	f := &FlagConfig{}
-	err := f.load()
-	if err == flag.ErrHelp {
-		os.Exit(0)
-	} else if err != nil {
-		return err
-	}
 	t := &multiconfig.TagLoader{}
-	j := &multiconfig.JSONLoader{Path: f.ConfigFile}
+	j := &multiconfig.JSONLoader{Path:CPath.MustValue("dbPath","path","config.json") }
 	m := multiconfig.MultiLoader(t, j)
-	err = m.Load(c)
+	err := m.Load(c)
 	return err
 }
