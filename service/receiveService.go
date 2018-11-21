@@ -8,8 +8,7 @@ import (
 )
 
 func callback(d MSG) {
-	common.Log.Infoln("yf_manage_message  consumer")
-	fmt.Printf("接收到的信息为%q",string(d.Body))
+	common.Log.Infof("consumer-name=%v",d.Poper)
 	//发送短息
 	new(MarshalJson).UnmarshalJson(d.Body)
 }
@@ -25,7 +24,7 @@ func dlxCallback(d MSG) {
 }
 
 func otherCallback(d MSG) {
-	common.Log.Infoln("yf_sms_send consumer ")
+	common.Log.Infof("consumer-name=%v ",d.Poper)
 	fmt.Printf("mq中读到的数据为：%q\r\n",string(d.Body))
 	UnmarshalMQBody(d.Body)
 }

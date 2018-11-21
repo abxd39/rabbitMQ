@@ -40,8 +40,8 @@ func main() {
 	cron := cron.New()
 	cron.Start()
 	defer cron.Stop()
-	//5秒执行一次
-	cron.AddFunc("*/60 * * * * *", service.CronSelect)
+	//60秒执行一次
+	cron.AddFunc("*/15 * * * * *", service.CronSelect)
 	//mq 初始化
 	common.CheckErr(service.Init())
 	//工作池初始化

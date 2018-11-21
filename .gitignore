@@ -5,3 +5,4 @@ th-platform-gateway
 models/*
 rmq.old.json
 configPath.ini
+tests/*

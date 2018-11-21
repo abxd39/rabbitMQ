@@ -56,16 +56,20 @@ func (t*TemplateSmsManage) UpdateCount(id,count int)error{
 	if count ==0{
 		return t.UpdateSendStatus(id)
 	}
-	has,err:=engine.Cols("send_count","updated","send_status").Where("id=?",id).Update(&TemplateSmsManage{
-		SendCount:count,
+	has,err:=engine.Where("id=?",id).Get(t)
+	if err!=nil{
+		return err
+	}
+	if !has{
+		return fmt.Errorf("数据库状态更新失败")
+	}
+	_,err=engine.Cols("send_count","updated","send_status").Where("id=?",id).Update(&TemplateSmsManage{
+		SendCount:count+t.SendCount,
 		SendStatus:2,
 		Updated:time.Now(),
 	})
 	if err!=nil{
 		return err
-	}
-	if has<=0{
-		return fmt.Errorf("数据库状态更新失败")
 	}
 	return nil
 }
