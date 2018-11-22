@@ -224,7 +224,7 @@ func CreateExchange(v Exchange) (err error) {
 	//noWait:是否非阻塞，true表示是非阻塞。
 	//args:直接写nil
 	if err = _ChannelPool[v.Channel].ExchangeDeclare(v.Name, v.Type,
-		false, false, false, false, nil); err != nil {
+		false, true, false, false, nil); err != nil {
 		return err
 	} else {
 		if _, ok := _ExchangePool[v.Name]; !ok {
@@ -291,7 +291,7 @@ func CreateQueue(v Queue) (err error) {
 	//nowait：是否非阻塞，true表示是非阻塞。阻塞：表示创建交换器的请求发送后，阻塞等待RMQ Server返回信息。非阻塞：不会阻塞等待RMQ Server的返回信息，而RMQ Server也不会返回信息。
 	//args：直接写nil
 	if _, err = _ChannelPool[v.Channel].QueueDeclare(v.Name, false,
-		false, false, false, nil); err != nil {
+		true, false, false, nil); err != nil {
 		return err
 	} else {
 		if _, ok := _QueuePool[v.Name]; !ok {
