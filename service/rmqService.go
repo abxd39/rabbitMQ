@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/koding/multiconfig"
 	"github.com/streadway/amqp"
 	"sctek.com/typhoon/th-platform-gateway/common"
@@ -492,7 +491,7 @@ func (m MSG) Ack(multiple bool) (err error) {
 
 //处理消息(顺序处理,如果需要多线程可以在回调函数中做手脚)
 func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, popupName string) {
-	fmt.Println("等待消息中......")
+	//fmt.Println("等待消息中......")
 	for d := range msgs {
 		var msg MSG = MSG{
 			Body:    d.Body,

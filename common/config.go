@@ -68,6 +68,7 @@ type ServerConfig struct {
 	VisitInterval string
 	IsDev         bool   `default:"false"`
 	Url           string `json:"url"`
+	PollingTime string `json:"polling_time"`
 }
 
 

@@ -46,9 +46,9 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	log.Printf("发送短息的url:=%s", url)
-	common.Log.Infof("%q\r\n",params)
 	err = json.Unmarshal(body, rsp)
 	if err != nil {
+		common.Log.Infof("%q\r\n",params)
 		return err
 	}
 	if rsp.Code !=-1 {

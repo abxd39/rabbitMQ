@@ -34,5 +34,6 @@
   "gate_way":{
     "host":"127.0.0.1"
   },
-  "url":"http://mall-api.ibc.snsshop.net/"
+  "url":"http://mall-api.ibc.snsshop.net/",
+  "polling_time":"*/15 * * * * *"
 }
