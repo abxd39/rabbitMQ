@@ -5,7 +5,6 @@ import (
 	"github.com/koding/multiconfig"
 )
 
-
 var CPath *goconfig.ConfigFile
 
 func init() {
@@ -23,17 +22,16 @@ func init() {
 //}
 //
 
-
 type ServerConfig struct {
 	Listen       string `json:"listen" default:":5000"`
 	RuntimePath  string `json:"runtime_path" default:"runtime"`
 	MaxWork      int    `json:"max_work"`
 	MaxQueueSize int    `json:"max_queue_size"`
 	Db           struct {
-		Host        string	`json:"host"`
+		Host        string `json:"host"`
 		Port        string `json:"port" default:"3306"`
-		Name        string	`json:"name"`
-		User        string`json:"user"`
+		Name        string `json:"name"`
+		User        string `json:"user"`
 		PassWord    string `json:"pass_word"`
 		SlaveConfig struct {
 			User     string `json:"user"`
@@ -49,13 +47,13 @@ type ServerConfig struct {
 	}
 	Redis struct {
 		Address  string `json:"address"`
-		Database int `json:"database" default:"0"`
+		Database int    `json:"database" default:"0"`
 		PassWord string `json:"pass_word"`
 	}
 	Log struct {
-		LogFileName    string `json:"log_file_name"`
-		LogFileDir 		string `json:"log_file_dir"`
-		TraceLevel string    `json:"trace_level" default:"info"`
+		LogFileName string `json:"log_file_name"`
+		LogFileDir  string `json:"log_file_dir"`
+		TraceLevel  string `json:"trace_level" default:"info"`
 		//Logger     struct {
 		//	Trace LoggerConfig `json:"trace"`
 		//	Info  LoggerConfig `json:"info"`
@@ -71,13 +69,12 @@ type ServerConfig struct {
 	VisitInterval string
 	IsDev         bool   `default:"false"`
 	Url           string `json:"url"`
-	PollingTime string `json:"polling_time"`
+	PollingTime   string `json:"polling_time"`
 }
-
 
 func (c *ServerConfig) load() error {
 	t := &multiconfig.TagLoader{}
-	j := &multiconfig.JSONLoader{Path:CPath.MustValue("dbPath","path","config.json") }
+	j := &multiconfig.JSONLoader{Path: CPath.MustValue("dbPath", "path", "config.json")}
 	m := multiconfig.MultiLoader(t, j)
 	err := m.Load(c)
 	return err

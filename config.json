@@ -28,7 +28,7 @@
     "pass_word":"123456"
   },
   "log": {
-    "traceLevel": "info",
+    "trace_level": "info",
     "log_file_name":"th-platform-gateway",
     "log_file_dir":"E:/WorkSpace/src/log/"
   },
