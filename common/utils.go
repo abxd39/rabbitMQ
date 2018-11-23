@@ -93,7 +93,7 @@ func FormatTime(t time.Time) string {
 func CheckErr(err error) {
 	if err != nil {
 		log.Fatal(err)
-		//fmt.Println(fmt.Printf("%s %s", time.Now().Format(common.DATETIME), err.Error()))
+		fmt.Println(fmt.Printf("%s %s", time.Now().Format("2006-01-02 15:04:05"), err.Error()))
 	}
 }
 
