@@ -25,7 +25,7 @@ func InitLogger(dir, name, level string)error {
 	if err != nil {
 		panic("config local file system logger error. ")
 	}
-
+	level ="debug"
 	switch level {
 
 	case "debug":
