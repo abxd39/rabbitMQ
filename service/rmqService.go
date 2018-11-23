@@ -3,11 +3,11 @@ package service
 import (
 	"errors"
 	"github.com/koding/multiconfig"
+	Log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
-
 
 //连接结构
 type Connect struct {
@@ -112,11 +112,10 @@ func loadCfg() (err error) {
 	return nil
 }
 
-
 func (c *mqCfg) load() error {
 
 	t := &multiconfig.TagLoader{}
-	j := &multiconfig.JSONLoader{Path: common.CPath.MustValue("rmqPath","path","rmq.json")}
+	j := &multiconfig.JSONLoader{Path: common.CPath.MustValue("rmqPath", "path", "rmq.json")}
 	m := multiconfig.MultiLoader(t, j)
 	err := m.Load(c)
 	return err
@@ -503,7 +502,7 @@ func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, po
 		callback(msg)
 		err := d.Ack(false)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 		}
 		time.Sleep(time.Nanosecond)
 	}

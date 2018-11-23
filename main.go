@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/robfig/cron"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"os/signal"
@@ -19,13 +19,20 @@ func main() {
 	common.CheckErr(common.LoadConfig())
 	// common.CheckErr(common.OpenRedis())
 	common.CheckErr(common.OpenDb())
-	common.CheckErr(common.SetupLogger())
+	//common.CheckErr(common.SetupLogger())
 	defer common.DB.Close()
-
+	common.CheckErr(
+		common.InitLogger(
+			common.Config.Log.LogFileDir,
+			common.Config.Log.LogFileName,
+			common.Config.Log.TraceLevel))
 	//启动定时器
 	cron := cron.New()
 	cron.Start()
 	defer cron.Stop()
+	if len(common.Config.PollingTime) == 0 {
+		panic("配置文件定时器的的轮询时间读取失败！！！")
+	}
 	//60秒执行一次
 	cron.AddFunc(common.Config.PollingTime, service.CronSelect)
 
@@ -53,7 +60,7 @@ func main() {
 			log.Printf("listen: %s\n", err)
 		}
 	}()
-	fmt.Println("listen:",common.Config.Listen)
+	fmt.Println("listen:", common.Config.Listen)
 	//Wait for interrupt signal to gracefully shutdown the server with
 	//a timeout of 30 seconds.
 	quit := make(chan os.Signal)

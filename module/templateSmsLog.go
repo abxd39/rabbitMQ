@@ -2,6 +2,7 @@ package module
 
 import (
 	"encoding/json"
+	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"sctek.com/typhoon/th-platform-gateway/sms"
 	"time"
@@ -26,24 +27,24 @@ type Result struct {
 
 //
 func (t *TemplateSmsLog) SendMobileMessage(body []byte) {
-	common.Log.Traceln("开始发送短息")
+	Log.Traceln("开始发送短息")
 	re := &Result{}
 	err := json.Unmarshal(body, re)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return
 	}
 	if len(re.Mobile) <= 0 {
-		common.Log.Infof("发送短息的电话号码为空")
+		Log.Infof("发送短息的电话号码为空")
 		return
 	}
 	if len(re.Message) <= 0 {
-		common.Log.Infof("发送的内容为空")
+		Log.Infof("发送的内容为空")
 		return
 	}
 	err = new(sms.SMSMessage).SendMobileMessage(re.Mobile, re.Message)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		t.Status = 2
 	}
 	t.Mobile = re.Mobile
@@ -55,7 +56,7 @@ func (t *TemplateSmsLog) SendMobileMessage(body []byte) {
 	t.Created = time.Now() //.Format("2006-01-02 15:04:05")
 	_, err = common.DB.InsertOne(t)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 	}
 	return
 }

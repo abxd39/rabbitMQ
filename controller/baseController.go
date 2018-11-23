@@ -4,8 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
-	"sctek.com/typhoon/th-platform-gateway/errors"
 	"sctek.com/typhoon/th-platform-gateway/common"
+	"sctek.com/typhoon/th-platform-gateway/errors"
 	"strconv"
 )
 
@@ -29,11 +29,11 @@ type Controller struct {
 // gin context每个请求都会先reset
 func (c *Controller) Put(ctx *gin.Context, key string, value interface{}) {
 	// lazy init
-	if ctx.Keys==nil{
+	if ctx.Keys == nil {
 		ctx.Keys = make(map[string]interface{})
 	}
-	if _,ok:=ctx.Keys[SAVE_DATA_KEY];!ok {
-		ctx.Keys[SAVE_DATA_KEY]=make(map[string]interface{})
+	if _, ok := ctx.Keys[SAVE_DATA_KEY]; !ok {
+		ctx.Keys[SAVE_DATA_KEY] = make(map[string]interface{})
 	}
 	ctx.Keys[SAVE_DATA_KEY].(map[string]interface{})[key] = value
 }

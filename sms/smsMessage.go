@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	Log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"sctek.com/typhoon/th-platform-gateway/common"
 )
-
 
 //发送短息
 type SMSMessage struct{}
@@ -24,7 +24,7 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	reader := bytes.NewReader(bytesData)
-	url := common.Config.Url+"ec_crm/sms/qcloud-send?"
+	url := common.Config.Url + "ec_crm/sms/qcloud-send?"
 	request, err := http.NewRequest("POST", url, reader)
 	if err != nil {
 		return err
@@ -38,8 +38,8 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 		return err
 	}
 	rsp := &struct {
-		Code int    `json:"code"`
-		ErrMsg  string `json:"errmsg"`
+		Code   int    `json:"code"`
+		ErrMsg string `json:"errmsg"`
 	}{}
 	body, err := ioutil.ReadAll(result.Body)
 	if err != nil {
@@ -48,12 +48,12 @@ func (s *SMSMessage) SendMobileMessage(phone, message string) error {
 	log.Printf("发送短息的url:=%s", url)
 	err = json.Unmarshal(body, rsp)
 	if err != nil {
-		common.Log.Infof("%q\r\n",params)
+		Log.Infof("%q\r\n", params)
 		return err
 	}
-	if rsp.Code !=-1 {
-		return fmt.Errorf("发送短息返回的错误信息为【%v】",rsp.ErrMsg)
+	if rsp.Code != -1 {
+		return fmt.Errorf("发送短息返回的错误信息为【%v】", rsp.ErrMsg)
 	}
-	common.Log.Infoln("短息发送成功^~^")
+	Log.Infoln("短息发送成功^~^")
 	return nil
 }

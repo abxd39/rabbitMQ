@@ -2,6 +2,7 @@ package module
 
 import (
 	"fmt"
+	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
@@ -35,7 +36,7 @@ func(t*TemplateSmsManage)GetManageCron()([]TemplateSmsManage,error){
 }
 
 func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
-	common.Log.Infoln("从mq 中获取消息id")
+	Log.Infoln("从mq 中获取消息id")
 	engine := common.DB
 	has, err := engine.Where("id=?", id).Get(t)
 	if err != nil {
@@ -51,7 +52,7 @@ func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
 
 
 func (t*TemplateSmsManage) UpdateCount(id,count int)error{
-	common.Log.Infof("修改数据库状态id=%v,发送的数量为=%v\r\n",id,count)
+	Log.Infof("修改数据库状态id=%v,发送的数量为=%v\r\n",id,count)
 	engine:=common.DB
 	if count ==0{
 		return t.UpdateSendStatus(id)
@@ -75,7 +76,7 @@ func (t*TemplateSmsManage) UpdateCount(id,count int)error{
 }
 
 func (t*TemplateSmsManage)UpdateSendStatus(id int)error{
-	common.Log.Infoln("修改数据库发送状态")
+	Log.Infoln("修改数据库发送状态")
 	has,err:=common.DB.Cols("send_status").Where("id=?",id).Update(&TemplateSmsManage{
 		SendStatus:1,
 	})

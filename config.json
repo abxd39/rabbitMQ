@@ -10,7 +10,7 @@
     "pass_word":"typhoon",
     "max_open_conns":100,
     "max_idle_conns":10,
-    "show_sQL":false,
+    "show_sQL":true,
     "slave_config":{
       "user":"admin",
       "pass_word":"admin"
@@ -28,12 +28,13 @@
     "pass_word":"123456"
   },
   "log": {
-    "traceLevel": 1,
-    "log_file":"th-platform-gateway.log"
+    "traceLevel": "info",
+    "log_file_name":"th-platform-gateway",
+    "log_file_dir":"E:/WorkSpace/src/log/"
   },
   "gate_way":{
     "host":"127.0.0.1"
   },
   "url":"http://mall-api.ibc.snsshop.net/",
-  "polling_time":"*/15 * * * * *"
+  "polling_time":"*/60 * * * * *"
 }

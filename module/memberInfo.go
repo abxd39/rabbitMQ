@@ -1,7 +1,7 @@
 package module
 
 import (
-	"fmt"
+	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/common"
 )
 
@@ -24,51 +24,44 @@ func (m *MemberInfo) TableName() string {
 	return "member_info"
 }
 
-func(m* MemberInfo) GetMemberIdList(idList []int)([]MemberInfo,error){
-	common.Log.Infof("会员id%v\r\n",idList)
-	list:=make([]MemberInfo,0)
-	err:=common.DB.Cols("member_id","corp_id","mobile").In("member_id",idList).Find(&list)
-	if err!=nil{
+func (m *MemberInfo) GetMemberIdList(idList []int) ([]MemberInfo, error) {
+	Log.Infof("会员id%v\r\n", idList)
+	list := make([]MemberInfo, 0)
+	err := common.DB.Cols("member_id", "corp_id", "mobile").In("member_id", idList).Find(&list)
+	if err != nil {
 		return nil, err
 	}
 	return list, nil
 }
 
-func(m*MemberInfo)GetMessageOfSex(sex string)([]MemberInfo,error){
-	common.Log.Infof("性别为%q的会员\r\n",sex)
+func (m *MemberInfo) GetMessageOfSex(sex string) ([]MemberInfo, error) {
+	Log.Infof("性别为%q的会员\r\n", sex)
 	engine := common.DB
 	list := make([]MemberInfo, 0)
 	err := engine.Where("sex=?", sex).Find(&list)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return list,nil
+	return list, nil
 }
 
-
-
-func (m* MemberInfo)GetAllMember()([]MemberInfo,error){
-	common.Log.Infoln("即时全员发送")
+func (m *MemberInfo) GetAllMember() ([]MemberInfo, error) {
+	Log.Infoln("即时全员发送")
 	engine := common.DB
 	list := make([]MemberInfo, 0)
 	err := engine.Select(" * ").Find(&list)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return list,nil
+	return list, nil
 }
 
-
-
-func (m*MemberInfo)GetMessageOfPhone(phone string) error {
-	common.Log.Infoln("指定电话号码发送短息")
+func (m *MemberInfo) GetMessageOfPhone(phone string) (bool, error) {
+	Log.Infoln("指定电话号码发送短息")
 	engine := common.DB
 	has, err := engine.Where("mobile=?", phone).Get(m)
 	if err != nil {
-		return err
+		return true, err
 	}
-	if !has {
-		return fmt.Errorf("手机号码为：%v的用户不存在！！", phone)
-	}
-	return nil
+	return has, nil
 }
