@@ -15,7 +15,7 @@ var pool *worker.Pool
 func InitPool() {
 	pool = worker.NewPool(common.Config.MaxQueueSize)
 	pool.Run(common.Config.MaxWork)
-	Log.Infof("goroutine的个数为%v,最大任务数为%v\r\n", common.Config.MaxWork, common.Config.MaxQueueSize)
+	Log.Infof("goroutine的个数为%v,最大任务数为%v", common.Config.MaxWork, common.Config.MaxQueueSize)
 }
 
 func ClosePool() {
