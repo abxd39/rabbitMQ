@@ -25,7 +25,7 @@ func main() {
 		common.InitLogger(
 			common.Config.Log.LogFileDir,
 			common.Config.Log.LogFileName,
-			common.Config.Log.TraceLevel))
+			""))
 	//启动定时器
 	cron := cron.New()
 	cron.Start()

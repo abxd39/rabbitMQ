@@ -47,7 +47,7 @@ type ServerConfig struct {
 	Log struct {
 		LogFileName string `json:"log_file_name"`
 		LogFileDir  string `json:"log_file_dir"`
-		TraceLevel  string `json:"trace_level" default:"info"`
+		//TraceLevel  string `json:"trace_level" default:"info"`
 	}
 	GateWay struct {
 		Token string `default:"test"`
