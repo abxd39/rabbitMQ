@@ -8,6 +8,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
+	Log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"log"
 	"math/big"
@@ -15,8 +17,6 @@ import (
 	"net/url"
 	"strconv"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
 
 type ErrorRes struct {

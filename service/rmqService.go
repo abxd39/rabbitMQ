@@ -2,13 +2,12 @@ package service
 
 import (
 	"errors"
-	"fmt"
 	"github.com/koding/multiconfig"
+	Log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"time"
 )
-
 
 //连接结构
 type Connect struct {
@@ -113,11 +112,10 @@ func loadCfg() (err error) {
 	return nil
 }
 
-
 func (c *mqCfg) load() error {
 
 	t := &multiconfig.TagLoader{}
-	j := &multiconfig.JSONLoader{Path: common.CPath.MustValue("rmqPath","path","rmq.json")}
+	j := &multiconfig.JSONLoader{Path: common.CPath.MustValue("rmqPath", "path", "rmq.json")}
 	m := multiconfig.MultiLoader(t, j)
 	err := m.Load(c)
 	return err
@@ -225,7 +223,7 @@ func CreateExchange(v Exchange) (err error) {
 	//noWait:是否非阻塞，true表示是非阻塞。
 	//args:直接写nil
 	if err = _ChannelPool[v.Channel].ExchangeDeclare(v.Name, v.Type,
-		false, false, false, false, nil); err != nil {
+		false, true, false, false, nil); err != nil {
 		return err
 	} else {
 		if _, ok := _ExchangePool[v.Name]; !ok {
@@ -292,7 +290,7 @@ func CreateQueue(v Queue) (err error) {
 	//nowait：是否非阻塞，true表示是非阻塞。阻塞：表示创建交换器的请求发送后，阻塞等待RMQ Server返回信息。非阻塞：不会阻塞等待RMQ Server的返回信息，而RMQ Server也不会返回信息。
 	//args：直接写nil
 	if _, err = _ChannelPool[v.Channel].QueueDeclare(v.Name, false,
-		false, false, false, nil); err != nil {
+		true, false, false, nil); err != nil {
 		return err
 	} else {
 		if _, ok := _QueuePool[v.Name]; !ok {
@@ -492,7 +490,7 @@ func (m MSG) Ack(multiple bool) (err error) {
 
 //处理消息(顺序处理,如果需要多线程可以在回调函数中做手脚)
 func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, popupName string) {
-	fmt.Println("等待消息中......")
+	//fmt.Println("等待消息中......")
 	for d := range msgs {
 		var msg MSG = MSG{
 			Body:    d.Body,
@@ -504,7 +502,7 @@ func handleMsg(msgs <-chan amqp.Delivery, callback func(MSG), channel string, po
 		callback(msg)
 		err := d.Ack(false)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 		}
 		time.Sleep(time.Nanosecond)
 	}

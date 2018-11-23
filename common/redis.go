@@ -1,9 +1,9 @@
 package common
 
 import (
-	"time"
-
 	"github.com/go-redis/redis"
+	Log "github.com/sirupsen/logrus"
+	"time"
 )
 
 const (

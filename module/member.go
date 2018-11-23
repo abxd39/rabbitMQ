@@ -1,6 +1,7 @@
 package module
 
 import (
+	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/common"
 	"strconv"
 	"strings"
@@ -40,11 +41,11 @@ func (m *Member) GetMallId(id int) int {
 	engine := common.DB
 	has, err := engine.Where("id=?", id).Get(m)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return 0
 	}
 	if !has {
-		common.Log.Errorf("会员%d不存在！！\r\n", id)
+		Log.Errorf("会员%d不存在！！\r\n", id)
 		return 0
 	}
 	return m.MallId

@@ -227,6 +227,12 @@
 			"revisionTime": "2018-07-24T14:53:07Z"
 		},
 		{
+			"checksumSHA1": "0Hvy6LfJa1y54UxQ2zQtcMd6ZKU=",
+			"path": "github.com/konsorten/go-windows-terminal-sequences",
+			"revision": "5c8c8bd35d3832f5d134ae1e1e375b69a4d25242",
+			"revisionTime": "2018-10-04T22:41:46Z"
+		},
+		{
 			"checksumSHA1": "yhRdcyFaeFIuXxIMglSBSaRQnZY=",
 			"path": "github.com/kr/pretty",
 			"revision": "73f6ac0b30a98e433b289500d779f50c1a6f0712",
@@ -237,6 +243,12 @@
 			"path": "github.com/kr/text",
 			"revision": "e2ffdb16a802fe2bb95e2e35ff34f0e53aeef34f",
 			"revisionTime": "2018-05-06T08:24:08Z"
+		},
+		{
+			"checksumSHA1": "ns0uvoQohIixCuw99GuyBkB01ng=",
+			"path": "github.com/lestrrat/go-file-rotatelogs",
+			"revision": "d3151e2a480fdcd05fb97102f5310a47d96274c4",
+			"revisionTime": "2018-02-23T00:06:17Z"
 		},
 		{
 			"checksumSHA1": "sZeGlRlcR+os8QlOQUd1jokatYo=",
@@ -489,6 +501,12 @@
 			"path": "github.com/shopspring/decimal",
 			"revision": "cd690d0c9e2447b1ef2a129a6b7b49077da89b8e",
 			"revisionTime": "2018-07-09T20:31:17Z"
+		},
+		{
+			"checksumSHA1": "WgEF9mtVV6qpgs35uyAaReJJFVU=",
+			"path": "github.com/sirupsen/logrus",
+			"revision": "29d7eb25e8ffa54207ff5a9a5c3d63e95be2cc39",
+			"revisionTime": "2018-11-22T06:14:47Z"
 		},
 		{
 			"checksumSHA1": "eqYR9hqzByO4Jn5yRFWbpo4Jz/o=",

@@ -2,7 +2,7 @@ package service
 
 import (
 	"fmt"
-	"sctek.com/typhoon/th-platform-gateway/common"
+	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/module"
 	"strings"
 	"time"
@@ -14,7 +14,7 @@ type LogicService struct {
 func CronSelect() {
 	list, err := new(module.TemplateSmsManage).GetManageCron()
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return
 	}
 	//判断是否到发送时间
@@ -24,9 +24,9 @@ func CronSelect() {
 		if v.SendTime.Unix() <= tim.Unix() {
 			message, err := new(module.TemplateSms).GetText(v.TemplateId)
 			if err != nil {
-				common.Log.Infoln(err)
+				Log.Infoln(err)
 				if err := v.UpdateSendStatus(v.Id); err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 					continue
 				}
 				continue
@@ -38,19 +38,19 @@ func CronSelect() {
 				//获取短息模板
 				count, err = new(LogicService).SendMessageEveryOne(v.Id, message)
 				if err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 				}
 
-			}else if v.AcceptUserType == 3 { //指定电话号码定时发送
-				count,err=new(LogicService).SendMessageOfMobile(v.Id, v.Mobile, message)
-				if err!=nil{
-					common.Log.Errorln(err)
+			} else if v.AcceptUserType == 3 { //指定电话号码定时发送
+				count, err = new(LogicService).SendMessageOfMobile(v.Id, v.Mobile, message)
+				if err != nil {
+					Log.Errorln(err)
 				}
 
 			}
 			err = v.UpdateCount(v.Id, count)
 			if err != nil {
-				common.Log.Errorln(err)
+				Log.Errorln(err)
 			}
 		}
 	}
@@ -58,11 +58,11 @@ func CronSelect() {
 	return
 }
 
-func (l *LogicService) SendMessage(id int,message string) int {
+func (l *LogicService) SendMessage(id int, message string) int {
 	count := 0
 	list, err := new(module.TemplateSmsType).GetSmsTypeOfId(id)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return count
 	}
 
@@ -71,7 +71,7 @@ func (l *LogicService) SendMessage(id int,message string) int {
 			fmt.Println("根据会员性别发送")
 			count, err = l.SendMessageForSex(id, v.TypeData, message)
 			if err != nil {
-				common.Log.Errorln(err)
+				Log.Errorln(err)
 				continue
 			}
 		} else if v.Type == 2 { //会员等级
@@ -81,7 +81,7 @@ func (l *LogicService) SendMessage(id int,message string) int {
 			fmt.Println("根据会员生日发送")
 			count, err = l.SendMessageOfBirthDay(id, v.TypeData, message)
 			if err != nil {
-				common.Log.Errorln(err)
+				Log.Errorln(err)
 				continue
 			}
 		}
@@ -115,13 +115,13 @@ func (l *LogicService) SendMessageOfBirthDay(id int, typeDate, msg string) (int,
 				}
 				result, err := sendLog.marshalJson(msg)
 				if err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 					continue
 				}
 
 				err = Push("Pusher", "", result)
 				if err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 					continue
 				}
 				count++
@@ -137,17 +137,17 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) int {
 	count := 0
 	listMemberId, err := new(module.Member).GetMemberId(typeDate)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return count
 	}
 	if len(listMemberId) == 0 {
 		err = fmt.Errorf("member 表中没有 MemberCarId=%v的记录", typeDate)
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return count
 	}
 	list, err := new(module.MemberInfo).GetMemberIdList(listMemberId)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return count
 	}
 	sendLog := new(MarshalJson)
@@ -163,13 +163,13 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) int {
 
 		result, err := sendLog.marshalJson(msg)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 
 		Push("Pusher", "", result)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 		count++
@@ -198,13 +198,13 @@ func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) (int, erro
 
 		result, err := sendLog.marshalJson(msg)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 
 		err = Push("Pusher", "", result)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 		count++
@@ -232,13 +232,13 @@ func (l *LogicService) SendMessageEveryOne(id int, msg string) (int, error) {
 
 		result, err := sendLog.marshalJson(msg)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 
 		err = Push("Pusher", "", result)
 		if err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 			continue
 		}
 		count++
@@ -250,28 +250,38 @@ func (l *LogicService) SendMessageEveryOne(id int, msg string) (int, error) {
 //指定手机号码发送
 //返回值 1 为发送条数
 func (l *LogicService) SendMessageOfMobile(id int, typeDate, msg string) (int, error) {
+
 	ob := new(module.MemberInfo)
-	err := ob.GetMessageOfPhone(typeDate)
+	has, err := ob.GetMessageOfPhone(typeDate)
 	if err != nil {
 		return 0, err
 	}
 	sendLog := new(MarshalJson)
-	sendLog.TemplateManageId = id
-	sendLog.MemberId = ob.MemberId
-	sendLog.CorpId = ob.CorpId
-	sendLog.Mobile = ob.Mobile
-	sendLog.MallId = new(module.Member).GetMallId(ob.MemberId)
-	if sendLog.MallId == 0 {
-		return 0, fmt.Errorf("会员%d不存在！！", ob.MemberId)
-	}
 	result, err := sendLog.marshalJson(msg)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return 0, err
 	}
+	if !has {
+		sendLog.TemplateManageId = -1
+		sendLog.MemberId = -1
+		sendLog.CorpId = -1
+		sendLog.Mobile = typeDate
+		sendLog.MallId = -1
+	} else {
+		sendLog.TemplateManageId = id
+		sendLog.MemberId = ob.MemberId
+		sendLog.CorpId = ob.CorpId
+		sendLog.Mobile = ob.Mobile
+		sendLog.MallId = new(module.Member).GetMallId(ob.MemberId)
+		if sendLog.MallId == 0 {
+			return 0, fmt.Errorf("会员%d不存在！！", ob.MemberId)
+		}
+	}
+
 	err = Push("Pusher", "", result)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		return 0, err
 	}
 	return 1, nil
@@ -285,18 +295,18 @@ func (l *LogicService) AboutIdInfo(id int) {
 	tsm := new(module.TemplateSmsManage)
 	err := tsm.GetManageOfId(id)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 		if err := tsm.UpdateSendStatus(tsm.Id); err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 		}
 		return
 	}
 	//获取短息模板
 	message, err := new(module.TemplateSms).GetText(tsm.TemplateId)
 	if err != nil {
-		common.Log.Infoln(err)
+		Log.Infoln(err)
 		if err := tsm.UpdateSendStatus(tsm.Id); err != nil {
-			common.Log.Errorln(err)
+			Log.Errorln(err)
 		}
 		return
 	}
@@ -315,9 +325,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 			fmt.Println("全员即时发送")
 			count, err = l.SendMessageEveryOne(tsm.Id, message)
 			if err != nil {
-				common.Log.Errorln(err)
+				Log.Errorln(err)
 				if err := tsm.UpdateSendStatus(tsm.Id); err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 				}
 				return
 			}
@@ -330,9 +340,9 @@ func (l *LogicService) AboutIdInfo(id int) {
 			fmt.Println("指定电话号码即时发送")
 			count, err = l.SendMessageOfMobile(tsm.Id, tsm.Mobile, message)
 			if err != nil {
-				common.Log.Errorln(err)
+				Log.Errorln(err)
 				if err := tsm.UpdateSendStatus(tsm.Id); err != nil {
-					common.Log.Errorln(err)
+					Log.Errorln(err)
 				}
 				return
 			}
@@ -343,6 +353,6 @@ func (l *LogicService) AboutIdInfo(id int) {
 	//更新状态
 	err = tsm.UpdateCount(tsm.Id, count)
 	if err != nil {
-		common.Log.Errorln(err)
+		Log.Errorln(err)
 	}
 }
