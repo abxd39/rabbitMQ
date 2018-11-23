@@ -251,6 +251,12 @@
 			"revisionTime": "2018-02-23T00:06:17Z"
 		},
 		{
+			"checksumSHA1": "QpgwzqZxqxEfKd8MrGYoouArsrM=",
+			"path": "github.com/lestrrat/go-strftime",
+			"revision": "ba3bf9c1d0421aa146564a632931730344f1f9f1",
+			"revisionTime": "2018-02-20T04:22:22Z"
+		},
+		{
 			"checksumSHA1": "sZeGlRlcR+os8QlOQUd1jokatYo=",
 			"path": "github.com/lib/pq",
 			"revision": "90697d60dd844d5ef6ff15135d0203f65d2f53b8",
