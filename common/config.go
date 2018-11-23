@@ -15,12 +15,6 @@ func init() {
 	}
 }
 
-//type LoggerConfig struct {
-//	Enabled    bool `json:"enabled "default:"true"`
-//	LogFile    string `json:"log_file"`
-//	TraceLevel int `json:"trace_level" default:"3"`
-//}
-//
 
 type ServerConfig struct {
 	Listen       string `json:"listen" default:":5000"`
@@ -54,12 +48,6 @@ type ServerConfig struct {
 		LogFileName string `json:"log_file_name"`
 		LogFileDir  string `json:"log_file_dir"`
 		TraceLevel  string `json:"trace_level" default:"info"`
-		//Logger     struct {
-		//	Trace LoggerConfig `json:"trace"`
-		//	Info  LoggerConfig `json:"info"`
-		//	Warn  LoggerConfig `json:"warn"`
-		//	Error LoggerConfig `json:"error"`
-		//}
 	}
 	GateWay struct {
 		Token string `default:"test"`
