@@ -570,6 +570,7 @@
 			"revision": ""
 		},
 		{
+			"checksumSHA1": "SIhhNXud9FKua0s3WlGPRRkDKRg=",
 			"path": "golang.org/x/sys/unix",
 			"revision": ""
 		},
