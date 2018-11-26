@@ -52,7 +52,7 @@ func (m *MarshalJson) Run() error {
 	ob.CorpId = m.CorpId
 	ob.TemplateManageId = m.TemplateManageId
 	ob.MallId = m.MallId
-	if ob.MemberId == -1 {
+	if ob.MemberId == 0 {
 		ob.Status = 2
 	} else {
 		err := new(sms.SMSMessage).SendMobileMessage(m.Mobile, m.Msg)
