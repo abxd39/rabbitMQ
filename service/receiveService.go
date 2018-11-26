@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	Log "github.com/sirupsen/logrus"
+	"sctek.com/typhoon/th-platform-gateway/weChat"
 	"strconv"
 )
 
@@ -11,6 +12,13 @@ func callback(d MSG) {
 	Log.Infof("consumer-name=%v", d.Poper)
 	//发送短息
 	new(MarshalJson).UnmarshalJson(d.Body)
+}
+
+func weChatCallback(d MSG){
+	Log.Infof("consumer-name=%v",d.Poper)
+	ob:=new(weChat.WeChatMp)
+	ob.Body =d.Body
+	ob.ReceiveMqWeChatMessage()
 }
 
 func errCallback(d MSG) {

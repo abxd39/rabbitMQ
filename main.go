@@ -42,8 +42,8 @@ func main() {
 	common.CheckErr(service.Receive())
 
 	//工作池初始化
-	service.InitPool()
-	defer service.ClosePool()
+	common.InitPool()
+	defer common.ClosePool()
 
 	r := gin.New()
 	//r.Use(middleware.Logger(), gin.Recovery())

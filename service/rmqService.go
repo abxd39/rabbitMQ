@@ -434,9 +434,9 @@ func Receive() error {
 		return err
 	}
 
-	//if err := Pop("errPoper", errCallback); err != nil {
-	//	return err
-	//}
+	if err := Pop("weChat", weChatCallback); err != nil {
+		return err
+	}
 	//
 	//if err := Pop("dlxPoper", dlxCallback); err != nil {
 	//	return err

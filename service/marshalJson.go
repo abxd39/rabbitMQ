@@ -4,23 +4,10 @@ import (
 	"encoding/json"
 	Log "github.com/sirupsen/logrus"
 	"sctek.com/typhoon/th-platform-gateway/common"
-	"sctek.com/typhoon/th-platform-gateway/common/worker"
 	"sctek.com/typhoon/th-platform-gateway/module"
 	"sctek.com/typhoon/th-platform-gateway/sms"
 	"time"
 )
-
-var pool *worker.Pool
-
-func InitPool() {
-	pool = worker.NewPool(common.Config.MaxQueueSize)
-	pool.Run(common.Config.MaxWork)
-	Log.Infof("goroutine的个数为%v,最大任务数为%v", common.Config.MaxWork, common.Config.MaxQueueSize)
-}
-
-func ClosePool() {
-	pool.Shutdown()
-}
 
 type MarshalJson struct {
 	MemberId         int    `json:"member_id"`
@@ -57,7 +44,7 @@ func (m *MarshalJson) Run() error {
 	} else {
 		err := new(sms.SMSMessage).SendMobileMessage(m.Mobile, m.Msg)
 		if err != nil {
-			Log.Errorf("发送的信息为%#v",*m)
+			Log.Errorf("发送的信息为%#v", *m)
 			Log.Errorln(err)
 			ob.Status = 2
 		}
@@ -77,7 +64,7 @@ func (m *MarshalJson) UnmarshalJson(body []byte) {
 		Log.Errorln(err)
 		return
 	}
-	pool.Add(m)
+	common.Pool.Add(m)
 	//common.Log.Infoln("添加到工作池成功！！")
 	return
 }
