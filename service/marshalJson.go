@@ -57,6 +57,7 @@ func (m *MarshalJson) Run() error {
 	} else {
 		err := new(sms.SMSMessage).SendMobileMessage(m.Mobile, m.Msg)
 		if err != nil {
+			Log.Errorf("发送的信息为%#v",*m)
 			Log.Errorln(err)
 			ob.Status = 2
 		}

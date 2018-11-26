@@ -35,7 +35,7 @@ func (m *MemberInfo) GetMemberIdList(idList []int) ([]MemberInfo, error) {
 }
 
 func (m *MemberInfo) GetMessageOfSex(sex string) ([]MemberInfo, error) {
-	Log.Infof("性别为%q的会员\r\n", sex)
+	Log.Infof("性别为%q的会员", sex)
 	engine := common.DB
 	list := make([]MemberInfo, 0)
 	err := engine.Where("sex=?", sex).Find(&list)

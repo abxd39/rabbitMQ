@@ -54,9 +54,6 @@ func (t *TemplateSmsManage) GetManageOfId(id int) (error) {
 func (t*TemplateSmsManage) UpdateCount(id,count int)error{
 	Log.Infof("修改数据库状态id=%v,发送的数量为=%v",id,count)
 	engine:=common.DB
-	if count ==0{
-		return t.UpdateSendStatus(id)
-	}
 	has,err:=engine.Where("id=?",id).Get(t)
 	if err!=nil{
 		return err

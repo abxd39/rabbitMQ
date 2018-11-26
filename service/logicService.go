@@ -21,7 +21,7 @@ func CronSelect() {
 	for _, v := range list {
 		count := 0
 		tim := time.Now()
-		if v.SendTime.Unix() <= tim.Unix() {
+		if v.SendTime.Unix() <= tim.Unix() && v.AcceptUserType ==2 {
 			message, err := new(module.TemplateSms).GetText(v.TemplateId)
 			if err != nil {
 				Log.Infoln(err)
@@ -110,9 +110,6 @@ func (l *LogicService) SendMessageOfBirthDay(id int, typeDate, msg string) (int,
 				sendLog.CorpId = v.CorpId
 				sendLog.Mobile = v.Mobile
 				sendLog.MallId = new(module.Member).GetMallId(v.MemberId)
-				if sendLog.MallId == 0 {
-					continue
-				}
 				result, err := sendLog.marshalJson(msg)
 				if err != nil {
 					Log.Errorln(err)
@@ -157,10 +154,6 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) int {
 		sendLog.CorpId = v.CorpId
 		sendLog.Mobile = v.Mobile
 		sendLog.MallId = new(module.Member).GetMallId(v.MemberId)
-		if sendLog.MallId == 0 {
-			continue
-		}
-
 		result, err := sendLog.marshalJson(msg)
 		if err != nil {
 			Log.Errorln(err)
@@ -192,10 +185,6 @@ func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) (int, erro
 		sendLog.CorpId = v.CorpId
 		sendLog.Mobile = v.Mobile
 		sendLog.MallId = new(module.Member).GetMallId(v.MemberId)
-		if sendLog.MallId == 0 {
-			continue
-		}
-
 		result, err := sendLog.marshalJson(msg)
 		if err != nil {
 			Log.Errorln(err)
@@ -257,17 +246,15 @@ func (l *LogicService) SendMessageOfMobile(id int, typeDate, msg string) (int, e
 		return 0, err
 	}
 	sendLog := new(MarshalJson)
-	result, err := sendLog.marshalJson(msg)
 	if err != nil {
 		Log.Errorln(err)
 		return 0, err
 	}
 	if !has {
-		sendLog.TemplateManageId = -1
-		sendLog.MemberId = -1
-		sendLog.CorpId = -1
+		sendLog.TemplateManageId = id
 		sendLog.Mobile = typeDate
-		sendLog.MallId = -1
+		sendLog.MallId =0
+		Log.Errorf("指定发送短息的电话号码%v不是ibc会员",typeDate)
 	} else {
 		sendLog.TemplateManageId = id
 		sendLog.MemberId = ob.MemberId
@@ -278,7 +265,7 @@ func (l *LogicService) SendMessageOfMobile(id int, typeDate, msg string) (int, e
 			return 0, fmt.Errorf("会员%d不存在！！", ob.MemberId)
 		}
 	}
-
+	result, err := sendLog.marshalJson(msg)
 	err = Push("Pusher", "", result)
 	if err != nil {
 		Log.Errorln(err)
