@@ -24,8 +24,9 @@
     ]
   },
   "redis":{
-    "address":"127.0.0.1",
-    "pass_word":"123456"
+    "address":"10.20.20.82:6379",
+    "pass_word":"",
+    "key":"wxComponentAccessToken"
   },
   "log": {
     "trace_level": "info",

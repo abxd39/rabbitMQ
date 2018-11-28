@@ -8,16 +8,17 @@ import (
 	"strconv"
 )
 
-func callback(d MSG) {
+func SmsCallback(d MSG) {
 	Log.Infof("consumer-name=%v", d.Poper)
 	//发送短息
 	new(MarshalJson).UnmarshalJson(d.Body)
 }
 
-func weChatCallback(d MSG){
+func weChatServiceAccountTemplateMessageCallback(d MSG){
 	Log.Infof("consumer-name=%v",d.Poper)
 	ob:=new(weChat.WeChatMp)
 	ob.Body =d.Body
+	ob.Mark =1
 	ob.ReceiveMqWeChatMessage()
 }
 
@@ -26,12 +27,15 @@ func errCallback(d MSG) {
 	fmt.Println(string(d.Body))
 }
 
-func dlxCallback(d MSG) {
-	Log.Infoln("dlxQueue consumer")
-	fmt.Println(string(d.Body))
+func miniProgramTemplateMessageCallback(d MSG) {
+	Log.Infof("consumer-name=%v",d.Poper)
+	ob:=new(weChat.WeChatMp)
+	ob.Body =d.Body
+	ob.Mark =2
+	ob.ReceiveMqWeChatMessage()
 }
 
-func otherCallback(d MSG) {
+func DbIdCallback(d MSG) {
 	Log.Infof("consumer-name=%v ", d.Poper)
 	fmt.Printf("mq中读到的数据为：%q\r\n", string(d.Body))
 	UnmarshalMQBody(d.Body)

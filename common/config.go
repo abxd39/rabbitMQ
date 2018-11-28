@@ -42,6 +42,7 @@ type ServerConfig struct {
 		Address  string `json:"address"`
 		Database int    `json:"database" default:"0"`
 		PassWord string `json:"pass_word"`
+		Key string `json:"key"`
 	}
 	Log struct {
 		LogFileName string `json:"log_file_name"`

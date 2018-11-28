@@ -24,20 +24,24 @@
         ]}
     ],
     "pusher":[
-       {"name":"Pusher",
+       {"name":"smsPublish",
         "channel":"WorkChannel",
         "exchange":"smsExchange",
          "Key":"major_Exchanges"}
     ],
     "popup":[
-       {"name":"Poper",
+       {"name":"sms",
         "channel":"WorkChannel",
         "q_name":"yf_manage_message",
-        "consumer":"主交换机Consumer"},
+        "consumer":"smsConsumer"},
       {"name":"weChat",
         "channel":"WorkChannel",
         "q_name":"weChatTest",
-        "consumer":"微信模板消息推送"},
+        "consumer":"微信公众号模板消息推送"},
+      {"name":"miniProgram",
+        "channel":"WorkChannel",
+        "q_name":"weChatTest",
+        "consumer":"微信小程序模板消息推送"},
        {"name":"DBDataId",
         "channel":"WorkChannel",
         "q_name":"yf_sms_send",

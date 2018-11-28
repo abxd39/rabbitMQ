@@ -12,23 +12,41 @@ import (
 )
 
 type WeChatMp struct {
+	Mark uint //标记模板消息的发送方向 1为服务号模板消息 2 为小程序模板消息
 	token string
 	Body []byte
 }
 
 func (w *WeChatMp)ReceiveMqWeChatMessage(){
-	err:=w.GetTokenWeChat()
+
+	//AppID
+	key:=common.Config.Redis.Key+"wx0184d2ae8ae0dfe3"
+	value,err:=common.GetRedisValue(key)
 	if err!=nil{
+		//如果获取错误 只需要写日志就好
 		Log.Errorln(err)
-		return
 	}
-	Log.Infof(w.token)
-	return
+	if len(value)==0{
+		err=fmt.Errorf("读取redis key 为【%v】的值为【空】",key)
+		Log.Errorln(err)
+		err:=w.GetTokenWeChat()
+		if err!=nil{
+			Log.Errorln(err)
+			return
+		}
+	}else {
+		w.token =value
+	}
+	//Log.Infof(w.token)
 	common.Pool.Add(w)
 }
 
 func (w*WeChatMp)Run()error{
-	w.SendTemplateMessages()
+	if w.Mark ==1{
+		w.SendServiceAccountTemplateMessages()
+	}else if w.Mark==2{
+		w.SendMiniProgramTemplateMessageWxOpen()
+	}
 	return nil
 }
 
@@ -105,7 +123,7 @@ func (w WeChatMp) Industries() error {
 }
 
 //公众号发送模板消息
-func (w WeChatMp)SendTemplateMessages()error  {
+func (w WeChatMp)SendServiceAccountTemplateMessages()error  {
 	reader := bytes.NewReader(w.Body)
 	str:= fmt.Sprintf("access_toke=%v",w.token)
 	url := "https://api.weixin.qq.com/cgi-bin/message/template/send?"+str
@@ -146,7 +164,7 @@ func (w WeChatMp)SendTemplateMessages()error  {
 
 
 //小程序发送模板消息
-func (w WeChatMp)SendTemplateMessage1()error{
+func (w WeChatMp)SendMiniProgramTemplateMessageWxOpen()error{
 	reader := bytes.NewReader(w.Body)
 	str:= fmt.Sprintf("access_toke=%v",w.token)
 	url:="https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"+str

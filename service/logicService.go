@@ -116,7 +116,7 @@ func (l *LogicService) SendMessageOfBirthDay(id int, typeDate, msg string) (int,
 					continue
 				}
 
-				err = Push("Pusher", "", result)
+				err = Push("smsPublish", "", result)
 				if err != nil {
 					Log.Errorln(err)
 					continue
@@ -160,7 +160,7 @@ func (l *LogicService) SendMessageForGrade(id int, typeDate, msg string) int {
 			continue
 		}
 
-		Push("Pusher", "", result)
+		Push("smsPublish", "", result)
 		if err != nil {
 			Log.Errorln(err)
 			continue
@@ -191,7 +191,7 @@ func (l *LogicService) SendMessageForSex(id int, typeDae, msg string) (int, erro
 			continue
 		}
 
-		err = Push("Pusher", "", result)
+		err = Push("smsPublish", "", result)
 		if err != nil {
 			Log.Errorln(err)
 			continue
@@ -225,7 +225,7 @@ func (l *LogicService) SendMessageEveryOne(id int, msg string) (int, error) {
 			continue
 		}
 
-		err = Push("Pusher", "", result)
+		err = Push("smsPublish", "", result)
 		if err != nil {
 			Log.Errorln(err)
 			continue
@@ -266,7 +266,7 @@ func (l *LogicService) SendMessageOfMobile(id int, typeDate, msg string) (int, e
 		}
 	}
 	result, err := sendLog.marshalJson(msg)
-	err = Push("Pusher", "", result)
+	err = Push("smsPublish", "", result)
 	if err != nil {
 		Log.Errorln(err)
 		return 0, err

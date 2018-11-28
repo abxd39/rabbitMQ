@@ -17,10 +17,11 @@ import (
 
 func main() {
 	common.CheckErr(common.LoadConfig())
-	// common.CheckErr(common.OpenRedis())
+	common.CheckErr(common.OpenRedis())
 	common.CheckErr(common.OpenDb())
 	//common.CheckErr(common.SetupLogger())
 	defer common.DB.Close()
+	defer common.RedisPool.Close()
 	common.CheckErr(
 		common.InitLogger(
 			common.Config.Log.LogFileDir,

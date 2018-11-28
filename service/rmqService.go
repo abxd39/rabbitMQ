@@ -430,18 +430,18 @@ func Init() (err error) {
 }
 
 func Receive() error {
-	if err := Pop("Poper", callback); err != nil {
+	if err := Pop("sms", SmsCallback); err != nil {
 		return err
 	}
 
-	if err := Pop("weChat", weChatCallback); err != nil {
+	if err := Pop("weChat", weChatServiceAccountTemplateMessageCallback); err != nil {
 		return err
 	}
-	//
-	//if err := Pop("dlxPoper", dlxCallback); err != nil {
-	//	return err
-	//}
-	if err := Pop("DBDataId", otherCallback); err != nil {
+
+	if err := Pop("miniProgram", miniProgramTemplateMessageCallback); err != nil {
+		return err
+	}
+	if err := Pop("DBDataId", DbIdCallback); err != nil {
 		return err
 	}
 	return nil
