@@ -21,7 +21,12 @@
         "channel":"WorkChannel",
         "qbind":[
             {"Key":"major_Exchanges", "exchange_name":"smsExchange", "no_wait":false}
-        ]}
+        ]},
+        {"name":"weChatTest",
+            "channel":"WorkChannel",
+            "qbind":[
+                {"Key":"major_Exchanges", "exchange_name":"smsExchange", "no_wait":false}
+            ]}
     ],
     "pusher":[
        {"name":"smsPublish",
