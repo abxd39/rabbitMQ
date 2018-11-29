@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/robfig/cron"
-	log "github.com/sirupsen/logrus"
+	Log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
 	"os/signal"
@@ -58,7 +58,7 @@ func main() {
 	go func() {
 		// service connections
 		if err := srv.ListenAndServe(); err != nil {
-			log.Printf("listen: %s\n", err)
+			Log.Printf("listen: %s\n", err)
 		}
 	}()
 	fmt.Println("listen:", common.Config.Listen)
@@ -67,15 +67,15 @@ func main() {
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 	<-quit
-	log.Println("Shutdown Server ...")
+	Log.Println("Shutdown Server ...")
 	//stop http listen
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 	err := srv.Shutdown(ctx)
 	if err != nil {
-		log.Fatalln("Server Shutdown:", err)
+		Log.Fatalln("Server Shutdown:", err)
 	}
-	log.Println("Server exiting")
+	Log.Println("Server exiting")
 	//stop http listen
 
 }

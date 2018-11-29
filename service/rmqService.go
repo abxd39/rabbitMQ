@@ -441,7 +441,12 @@ func Receive() error {
 	if err := Pop("miniProgram", miniProgramTemplateMessageCallBack); err != nil {
 		return err
 	}
+
 	if err := Pop("DBDataId", DbIdCallBack); err != nil {
+		return err
+	}
+
+	if err := Pop("JPushMessage", JPushMessageCallBack); err != nil {
 		return err
 	}
 	return nil
