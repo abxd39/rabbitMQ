@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"github.com/koding/multiconfig"
 	Log "github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
@@ -129,7 +130,7 @@ func CloseConnect(name string) (err error) {
 }
 
 //创建连接
-func CreateConnect(v Connect) (err error) {
+func createConnect(v Connect) (err error) {
 	var connect *amqp.Connection
 	if connect, err = amqp.Dial(v.Addr); err != nil {
 		return err
@@ -146,7 +147,7 @@ func CreateConnect(v Connect) (err error) {
 //初始化连接
 func initConnect() (err error) {
 	for _, v := range _Cfg.Connects {
-		if err = CreateConnect(v); err != nil {
+		if err = createConnect(v); err != nil {
 			return err
 		}
 	}
@@ -162,7 +163,7 @@ func CloseChannel(name string) (err error) {
 }
 
 //创建信道
-func CreateChannel(v Channel) (err error) {
+func createChannel(v Channel) (err error) {
 	if _, ok := _ConnectPool[v.Connect]; !ok {
 		return errors.New("连接不存在\n")
 	}
@@ -189,7 +190,7 @@ func CreateChannel(v Channel) (err error) {
 //初始化信道
 func initChannel() (err error) {
 	for _, v := range _Cfg.Channels {
-		if err = CreateChannel(v); err != nil {
+		if err = createChannel(v); err != nil {
 			return err
 		}
 	}
@@ -211,7 +212,7 @@ func DeleteExchange(name string, ifUnused bool, noWait bool) (err error) {
 }
 
 //创建交换机
-func CreateExchange(v Exchange) (err error) {
+func createExchange(v Exchange) (err error) {
 	if _, ok := _ChannelPool[v.Channel]; !ok {
 		return errors.New("信道不存在\n")
 	}
@@ -249,7 +250,7 @@ func CreateExchange(v Exchange) (err error) {
 //初始化交换机
 func initExchange() (err error) {
 	for _, v := range _Cfg.Exchanges {
-		if err = CreateExchange(v); err != nil {
+		if err = createExchange(v); err != nil {
 			return err
 		}
 	}
@@ -271,7 +272,7 @@ func DeleteQueue(name string, ifUnused bool, ifEmpty bool, noWait bool) (err err
 }
 
 //创建队列
-func CreateQueue(v Queue) (err error) {
+func createQueue(v Queue) (err error) {
 	if _, ok := _ChannelPool[v.Channel]; !ok {
 		return errors.New("信道不存在\n")
 	}
@@ -316,7 +317,7 @@ func CreateQueue(v Queue) (err error) {
 //初始化队列
 func initQueue() (err error) {
 	for _, v := range _Cfg.Queue {
-		if err = CreateQueue(v); err != nil {
+		if err = createQueue(v); err != nil {
 			return err
 		}
 	}
@@ -324,7 +325,7 @@ func initQueue() (err error) {
 }
 
 //创建Pusher
-func CreatePusher(v Pusher) (err error) {
+func createPusher(v Pusher) (err error) {
 	if _, ok := _Pusher[v.Name]; !ok {
 		_Pusher[v.Name] = v
 	} else {
@@ -344,7 +345,7 @@ func DeletePusher(name string) (err error) {
 //初始化Pusher
 func initPusher() (err error) {
 	for _, v := range _Cfg.Pusher {
-		if err = CreatePusher(v); err != nil {
+		if err = createPusher(v); err != nil {
 			return err
 		}
 	}
@@ -539,4 +540,35 @@ func Pop(name string, callback func(MSG)) (err error) {
 	go handleMsg(msgs, callback, cfg.Channel, name)
 
 	return nil
+}
+
+func Ping(key string) error {
+	channel, ok := _ChannelPool[key]
+	if !ok {
+		return fmt.Errorf("key=%v不存在！！")
+	}
+	if channel == nil {
+		err := errors.New("RabbitMQ is not initialize")
+		return err
+	}
+
+	err := channel.ExchangeDeclare("ping.ping", "topic", false, true, false, true, nil)
+	if err != nil {
+		return err
+	}
+
+	msgContent := "ping.ping"
+
+	err = channel.Publish("ping.ping", "ping.ping", false, false, amqp.Publishing{
+		ContentType: "text/plain",
+		Body:        []byte(msgContent),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = channel.ExchangeDelete("ping.ping", false, false)
+
+	return err
 }

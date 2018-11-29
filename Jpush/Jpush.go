@@ -34,14 +34,14 @@ func (j *JPush) JMessage() error{
 	//base64(appKey:masterSecret)
 	Authorization := fmt.Sprintf("%s:%s", common.Config.JPush.AppKey, common.Config.JPush.MasterSecret)
 	encode := base64.StdEncoding.EncodeToString([]byte(Authorization))
-	params := make(map[string]interface{})
-	params["test"] = "test"
-	bytsData, err := json.Marshal(params)
-	if err != nil {
-		Log.Errorln(err)
-		return err
-	}
-	reader:=bytes.NewReader(bytsData)
+	//params := make(map[string]interface{})
+	//params["test"] = "test"
+	//bytsData, err := json.Marshal(params)
+	//if err != nil {
+	//	Log.Errorln(err)
+	//	return err
+	//}
+	reader:=bytes.NewReader(j.Context)
 	request ,err:=http.NewRequest("POST",Url,reader)
 	request.Header.Set("Content-Type","application/json;charset=UTF-8")
 	request.Header.Add("Authorization","Basic "+encode)
@@ -74,6 +74,11 @@ func (j *JPush) JMessage() error{
 		Log.Errorln(err)
 		return err
 	}
+	if result.SendNo =="0"{
+		Log.Errorln("JPush failed!!")
+		return  nil
+	}
+	//如何判断已经发送成功
 	Log.Errorln("JPush successful ^/~\\^")
 	return nil
 }

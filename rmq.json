@@ -13,12 +13,17 @@
   ],
   "exchanges":[
     {
+      "name":"interiorExchange",
+      "channel":"WorkChannel",
+      "type":"topic"
+    },
+    {
       "name":"smsExchange",
       "channel":"WorkChannel",
       "type":"direct",
       "ebind":[
         {
-          "destination":"smsExchange",
+          "destination":"interiorExchange",
           "key":"major_Exchanges",
           "no_wait":false
         }
