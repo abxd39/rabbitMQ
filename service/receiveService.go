@@ -4,22 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	Log "github.com/sirupsen/logrus"
+	"sctek.com/typhoon/th-platform-gateway/Jpush"
 	"sctek.com/typhoon/th-platform-gateway/weChat"
 	"strconv"
 )
 
-func SmsCallback(d MSG) {
+func SmsCallBack(d MSG) {
 	Log.Infof("consumer-name=%v", d.Poper)
 	//发送短息
 	new(MarshalJson).UnmarshalJson(d.Body)
 }
 
-func weChatServiceAccountTemplateMessageCallback(d MSG){
+func weChatServiceAccountTemplateMessageCallBack(d MSG){
 	Log.Infof("consumer-name=%v",d.Poper)
 	ob:=new(weChat.WeChatMp)
 	ob.Body =d.Body
 	ob.Mark =1
-	ob.ReceiveMqWeChatMessage()
+	ob.ReceiveWeChatMessageFromMQ()
 }
 
 func errCallback(d MSG) {
@@ -27,18 +28,24 @@ func errCallback(d MSG) {
 	fmt.Println(string(d.Body))
 }
 
-func miniProgramTemplateMessageCallback(d MSG) {
+func miniProgramTemplateMessageCallBack(d MSG) {
 	Log.Infof("consumer-name=%v",d.Poper)
 	ob:=new(weChat.WeChatMp)
 	ob.Body =d.Body
 	ob.Mark =2
-	ob.ReceiveMqWeChatMessage()
+	ob.ReceiveWeChatMessageFromMQ()
 }
 
-func DbIdCallback(d MSG) {
+func DbIdCallBack(d MSG) {
 	Log.Infof("consumer-name=%v ", d.Poper)
 	fmt.Printf("mq中读到的数据为：%q\r\n", string(d.Body))
 	UnmarshalMQBody(d.Body)
+}
+
+func JPushMessageCallBack(d MSG)  {
+	obj:=new(Jpush.JPush)
+	obj.Context = d.Body
+	obj.ReceiveJPushMessageFromMQ()
 }
 
 func UnmarshalMQBody(body []byte) error {

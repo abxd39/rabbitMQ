@@ -17,7 +17,7 @@ type WeChatMp struct {
 	Body []byte
 }
 
-func (w *WeChatMp)ReceiveMqWeChatMessage(){
+func (w *WeChatMp)ReceiveWeChatMessageFromMQ(){
 
 	//AppID
 	key:=common.Config.Redis.Key+"wx0184d2ae8ae0dfe3"

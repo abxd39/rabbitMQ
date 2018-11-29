@@ -3,6 +3,10 @@
   "runtime_path":"runtime",
   "max_work":10,
   "max_queue_size":200,
+  "j_push":{
+    "app_key":"764237bf9701a844b955c50d",
+    "master_secret":"600d248afb084210fcd7a67e"
+  },
   "db": {
     "host":"10.20.20.82",
     "name":"typhoon_ibc",

@@ -20,6 +20,10 @@ type ServerConfig struct {
 	RuntimePath  string `json:"runtime_path" default:"runtime"`
 	MaxWork      int    `json:"max_work"`
 	MaxQueueSize int    `json:"max_queue_size"`
+	JPush struct{
+		 AppKey string `json:"app_key"`
+		 MasterSecret string `json:"master_secret"`
+	}
 	Db           struct {
 		Host        string `json:"host"`
 		Port        string `json:"port" default:"3306"`
